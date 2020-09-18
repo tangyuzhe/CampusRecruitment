@@ -25,7 +25,7 @@ if (
     plugins.push([
       require('@dcloudio/vue-cli-plugin-hbuilderx/packages/babel-plugin-console'),
       {
-        file (file) {
+        file(file) {
           file = normalizePath(file)
           if (file.indexOf(input) === 0) {
             return path.relative(input, file)
@@ -34,7 +34,7 @@ if (
         }
       }
     ])
-  } catch (e) {}
+  } catch (e) { }
 }
 
 process.UNI_LIBRARIES = process.UNI_LIBRARIES || ['@dcloudio/uni-ui']
@@ -59,5 +59,15 @@ module.exports = {
       }
     ]
   ],
-  plugins
-}
+  plugins: [
+    [
+      'import',
+      {
+        libraryName: 'antd-mobile-vue',
+        libraryDirectory: 'es',
+        style: true
+      },
+      'antd-mobile-vue'
+    ]
+  ]
+};
