@@ -19,4 +19,22 @@ export const BaseRequest = {
       })
     })
   },
+  postRequest: (url: string, data: any) => {
+    return new Promise((resolve, reject) => {
+      uni.request({
+        url: '/api' + url,
+        method: "POST",
+        data: data,
+        header: {
+          "content-type": "application/json",
+        },
+        success: (res) => {
+          resolve(res)
+        },
+        fail: (res) => {
+          reject(res)
+        }
+      })
+    })
+  }
 };

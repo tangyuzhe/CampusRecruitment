@@ -1,7 +1,7 @@
 <template>
   <view>
     <u-form :model="Application" ref="uForm">
-      <u-form-item label="企业名称" label-width="200">
+      <u-form-item label="企业名称" label-width="200" prop="company">
         <u-input
           v-model="Application.company"
           placeholder="请输入您的企业名称"
@@ -62,8 +62,8 @@
         <u-input v-model="Application.recruitment_website" placeholder="请填写您的企业招聘网站" />
       </u-form-item>
 
-      <u-form-item label="上传营业执照" label-width="200">
-        <u-upload :action="action" :file-list="fileList"></u-upload>
+      <u-form-item label="上传营业执照" label-width="200" prop="uuid">
+        <u-upload max-count="1" ref="uUpload" :action="action"></u-upload>
       </u-form-item>
 
       <u-form-item label="当前时间" label-width="200">
@@ -79,6 +79,8 @@
 import { Component, Vue } from "vue-property-decorator";
 import moment from "moment";
 import * as api from "../../../api/request";
+import { Toast } from "vant";
+import { CompanyScaleList, CompanyNatureList } from "../../../util/dataList";
 @Component({
   components: {},
 })
@@ -91,40 +93,50 @@ export default class CompanyForm extends Vue {
   Application: any = {
     country: "中国",
   };
-  CompanyNatureList: any = [
-    {
-      text: "国有企业",
-    },
-    {
-      text: "私有企业",
-    },
-    {
-      text: "合资企业",
-    },
-  ];
-  CompanyScaleList: any = [
-    {
-      text: "0-100人",
-    },
-    {
-      text: "100-300人",
-    },
-    {
-      text: "300-500人",
-    },
-    {
-      text: "500-1000人",
-    },
-    {
-      text: "1000-3000人",
-    },
-    {
-      text: "3000人以上",
-    },
-  ];
+  CompanyNatureList: any = [];
+  CompanyScaleList: any = [];
+  action: string = "http://127.0.0.1:7001/api/v1/upload";
+  rules: any = {
+    company: [
+      {
+        required: true,
+        message: "请输入公司名",
+        trigger: ["change", "blur"],
+      },
+    ],
+    uuid: [
+      {
+        required: true,
+        message: "请添加有效的营业执照",
+        trigger: ["change", "blur"],
+      },
+    ],
+  };
 
-  submit() {
-    console.log(this.Application);
+  async submit() {
+    let list = [];
+    list = (this.$refs.uUpload as any).lists;
+    console.log(list);
+    if (list.length == 0) {
+      Toast.fail("未提交有效的营业执照！");
+    } else {
+      this.Application.uuid = list[0].response.files.fileName;
+      Toast.loading({
+        message: "正在提交中，请等候...",
+        forbidClick: true,
+      });
+      api.BaseRequest.postRequest(
+        "/v1/companyApplication",
+        this.Application
+      ).then((res: any) => {
+        if (res.data.code == 0) {
+          Toast.success("提交成功！");
+          uni.navigateBack(-1);
+        } else {
+          Toast.fail("提交失败！");
+        }
+      });
+    }
   }
 
   //选择企业地址
@@ -148,7 +160,7 @@ export default class CompanyForm extends Vue {
 
   //根据用户本地openid获取信息
   async getUserInfo() {
-    api.BaseRequest.getRequest("/v1/user?", {
+    await api.BaseRequest.getRequest("/v1/user?", {
       openid: "oeJ85uJDWaMNq33UN9V7vFfuJ0P0",
     }).then((res: any) => {
       this.Application.user_id = res.data.data.id;
@@ -156,9 +168,15 @@ export default class CompanyForm extends Vue {
   }
 
   created() {
+    this.CompanyScaleList = CompanyScaleList;
+    this.CompanyNatureList = CompanyNatureList;
     this.getUserInfo();
     let now = moment().format("YYYY-MM-DD HH:mm:ss");
     this.Application.time = now;
+  }
+
+  mounted() {
+    (this.$refs.uForm as any).setRules(this.rules);
   }
 }
 </script>
