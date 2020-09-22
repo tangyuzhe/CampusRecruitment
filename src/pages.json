@@ -2,11 +2,16 @@
 	"easycom": {
 		"^u-(.*)": "uview-ui/components/u-$1/u-$1.vue"
 	},
-	"pages": [
-		{
+	"pages": [{
 			"path": "pages/home/index",
 			"style": {
 				"navigationBarTitleText": "主页"
+			}
+		},
+		{
+			"path": "pages/authentication_page/index",
+			"style": {
+				"navigationBarTitleText": "游客认证"
 			}
 		}
 	],

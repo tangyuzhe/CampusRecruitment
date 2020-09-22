@@ -16,8 +16,8 @@
       <view class="drop">
         <van-dropdown-menu>
           <van-dropdown-item
-            v-model="value1"
-            :options="option1"
+            v-model="roleValue"
+            :options="roleOption"
             style="width:40px"
             @change="PermissionChange"
           />
@@ -27,7 +27,7 @@
 
     <view>
       <u-grid :col="3">
-        <u-grid-item v-for="(item,index) in grideList" :key="index">
+        <u-grid-item v-for="(item,index) in grideList" :key="index" @click="PageJump(index)">
           <u-icon :name="item.icon" :size="46"></u-icon>
           <view class="grid-text">{{item.name}}</view>
         </u-grid-item>
@@ -44,8 +44,8 @@ import { Component, Vue } from "vue-property-decorator";
 export default class Home extends Vue {
   img: string =
     "https://thirdwx.qlogo.cn/mmopen/vi_32/bX9HAxGRic2cV48BKJpD2UMU7pvzgW9tGv1lNZLHpmIEeOKxbYgMJLuMlhkaqicsntlmDYxCwnJxqjudsrcnN6TQ/132";
-  value1: string = "游客";
-  option1: any = [
+  roleValue: string = "游客";
+  roleOption: any = [
     { text: "游客", value: "游客" },
     { text: "企业", value: "企业" },
     { text: "管理员", value: "管理员" },
@@ -56,25 +56,37 @@ export default class Home extends Vue {
     { icon: "hourglass", name: "管理员审核", permission: ["管理员"] },
   ];
 
+  //改变角色
   PermissionChange(value: any) {
-    this.value1 = value;
+    this.roleValue = value;
+    this.grideList;
     this.ChangePermission();
   }
 
+  //改变角色改变入口
   ChangePermission() {
     this.grideList = [
       { icon: "photo", name: "认证申请", permission: ["游客"] },
       { icon: "lock", name: "企业记录", permission: ["企业"] },
       { icon: "hourglass", name: "管理员审核", permission: ["管理员"] },
     ];
-    this.grideList.forEach((e: any) => {
-      if (!e.permission.includes(this.value1)) {
-        let index = this.grideList.indexOf(e);
-        console.log(index);
+    this.grideList = this.grideList.filter((item: any) =>
+      item.permission.includes(this.roleValue)
+    );
+  }
 
-        this.grideList.splice(index, 1);
-      }
+  RouterRedirect(url: string) {
+    uni.navigateTo({
+      url: url,
     });
+  }
+
+  PageJump(index: number) {
+    switch (index) {
+      case 0:
+        this.RouterRedirect("/pages/authentication_page/index");
+        break;
+    }
   }
 
   onLoad() {
