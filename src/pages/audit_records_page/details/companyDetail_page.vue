@@ -39,12 +39,13 @@
       <u-tr class="u-tr" style="height:200px">
         <u-td class="u-td" width="30%">营业执照</u-td>
         <u-td class="u-td">
-          <u-image :src="'http://127.0.0.1:7001/public/upload/'+company.uuid" mode="widthFix"></u-image>
+          <u-image :src="imgSrc" alt="未提交图片" mode="widthFix" v-if="company.uuid"></u-image>
+          <u-empty text="暂无营业执照" v-else></u-empty>
         </u-td>
       </u-tr>
       <!-- <u-tr class="u-tr">
         <u-td class="u-td" width="30%">申请时间</u-td>
-        <u-td class="u-td">2020年12月21日 12:30:42</u-td>
+        <u-td class="u-td">{{moment(new Date()).format('YYYY-MM-DD HH:mm:ss')}}</u-td>
       </u-tr>-->
       <u-tr style="border:none">
         <u-td>
@@ -62,18 +63,22 @@
 import { Toast } from "vant";
 import { Component, Vue } from "vue-property-decorator";
 import * as api from "../../../api/request";
+import moment from "moment";
 @Component({
   components: {},
 })
 export default class CompanyDetailPage extends Vue {
   company_id: number = 0;
   company: any = {};
+  imgSrc: string = "http://127.0.0.1:7001/public/upload/";
+
   async GetCompanyDetail() {
     await api.BaseRequest.getRequest("/v1/searchCompany?", {
       id: this.company_id,
     }).then((res: any) => {
       if (res.data.code == 0) {
         this.company = res.data.data[0];
+        this.imgSrc += this.company.uuid;
       } else {
         Toast.fail("未查询到公司详情!");
       }
