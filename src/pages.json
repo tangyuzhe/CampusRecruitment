@@ -19,6 +19,12 @@
 			"style": {
 				"navigationBarTitleText": "审核记录"
 			}
+		},
+		{
+			"path": "pages/audit_records_page/details/companyDetail_page",
+			"style": {
+				"navigationBarTitleText": "公司详情"
+			}
 		}
 	],
 	"globalStyle": {
