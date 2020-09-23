@@ -63,7 +63,7 @@ export default class ApplicationRecordsTable extends Vue {
 
   //查看公司详情
   WatchCompanyDetail(val: number) {
-    console.log(val);
+    // console.log(val);
     uni.navigateTo({
       url:
         "/pages/audit_records_page/details/companyDetail_page?company_id=" +
