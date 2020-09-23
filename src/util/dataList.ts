@@ -1,3 +1,18 @@
+/** /pages/home/index */
+export const roleOption = [
+  { text: "游客", value: "游客" },
+  { text: "企业", value: "企业" },
+  { text: "管理员", value: "管理员" },
+];
+
+export const grideList = [
+  { icon: "photo", name: "认证申请", permission: ["游客"] },
+  { icon: "lock", name: "企业记录", permission: ["企业"] },
+  { icon: "hourglass", name: "管理员审核", permission: ["管理员"] },
+]
+
+
+/* /pages/authentication_page/company */
 export const CompanyScaleList = [
   {
     text: "0-100人",

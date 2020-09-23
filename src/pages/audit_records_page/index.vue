@@ -7,37 +7,37 @@
         :current="currentTab"
         @change="tabsChange"
         :is-scroll="false"
-        active-color="#fcbd71"
+        active-color="#2b85e4"
         bar-height="6"
         bar-width="40"
       ></u-tabs-swiper>
     </view>
+
     <view class="wrap margin-top" v-if="currentTab===0">
-      <company-form></company-form>
-    </view>
-    <view class="wrap margin-top" v-if="currentTab===1">
-      <admin-form></admin-form>
+      <application-records-table></application-records-table>
     </view>
   </view>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import CompanyForm from "./FormComponents/company.vue";
-import AdminForm from "./FormComponents/admin.vue";
+import * as api from "../../api/request";
+import ApplicationRecordsTable from "./recordsTable/applicationRecords.vue";
 @Component({
   components: {
-    CompanyForm,
-    AdminForm,
+    ApplicationRecordsTable,
   },
 })
-export default class AuthenticationPage extends Vue {
+export default class AuditRecordsPage extends Vue {
   list: object[] = [
     {
-      name: "企业认证",
+      name: "企业申请记录",
     },
     {
-      name: "管理员认证",
+      name: "管理员申请记录",
+    },
+    {
+      name: "教室安排",
     },
   ];
   currentTab: number = 0;

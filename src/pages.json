@@ -13,6 +13,12 @@
 			"style": {
 				"navigationBarTitleText": "游客认证"
 			}
+		},
+		{
+			"path": "pages/audit_records_page/index",
+			"style": {
+				"navigationBarTitleText": "审核记录"
+			}
 		}
 	],
 	"globalStyle": {

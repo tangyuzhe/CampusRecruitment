@@ -27,7 +27,7 @@
 
     <view>
       <u-grid :col="3">
-        <u-grid-item v-for="(item,index) in grideList" :key="index" @click="PageJump(index)">
+        <u-grid-item v-for="(item,index) in grideList" :key="index" @click="PageJump(item)">
           <u-icon :name="item.icon" :size="46"></u-icon>
           <view class="grid-text">{{item.name}}</view>
         </u-grid-item>
@@ -38,6 +38,8 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+import * as api from "../../api/request";
+import { roleOption, grideList } from "../../util/dataList";
 @Component({
   components: {},
 })
@@ -45,18 +47,22 @@ export default class Home extends Vue {
   img: string =
     "https://thirdwx.qlogo.cn/mmopen/vi_32/bX9HAxGRic2cV48BKJpD2UMU7pvzgW9tGv1lNZLHpmIEeOKxbYgMJLuMlhkaqicsntlmDYxCwnJxqjudsrcnN6TQ/132";
   roleValue: string = "游客";
-  roleOption: any = [
-    { text: "游客", value: "游客" },
-    { text: "企业", value: "企业" },
-    { text: "管理员", value: "管理员" },
-  ];
-  grideList: any = [
-    { icon: "photo", name: "认证申请", permission: ["游客"] },
-    { icon: "lock", name: "企业记录", permission: ["企业"] },
-    { icon: "hourglass", name: "管理员审核", permission: ["管理员"] },
-  ];
+  roleOption: any = [];
+  grideList: any = [];
 
-  //改变角色
+  //获取用户角色
+  async getUserInfo() {
+    await api.BaseRequest.getRequest("/v1/user?", {
+      openid: "oeJ85uJDWaMNq33UN9V7vFfuJ0P0",
+    }).then((res: any) => {
+      if (res.data.code == 0) {
+        this.roleValue = res.data.data.role;
+        this.ChangePermission();
+      }
+    });
+  }
+
+  //手动改变角色
   PermissionChange(value: any) {
     this.roleValue = value;
     this.grideList;
@@ -65,11 +71,7 @@ export default class Home extends Vue {
 
   //改变角色改变入口
   ChangePermission() {
-    this.grideList = [
-      { icon: "photo", name: "认证申请", permission: ["游客"] },
-      { icon: "lock", name: "企业记录", permission: ["企业"] },
-      { icon: "hourglass", name: "管理员审核", permission: ["管理员"] },
-    ];
+    this.grideList = grideList;
     this.grideList = this.grideList.filter((item: any) =>
       item.permission.includes(this.roleValue)
     );
@@ -81,16 +83,23 @@ export default class Home extends Vue {
     });
   }
 
-  PageJump(index: number) {
-    switch (index) {
-      case 0:
+  //路由跳转
+  PageJump(item: any) {
+    switch (item.name) {
+      case "认证申请":
         this.RouterRedirect("/pages/authentication_page/index");
+        break;
+      case "管理员审核":
+        this.RouterRedirect("/pages/audit_records_page/index");
         break;
     }
   }
 
   onLoad() {
+    this.roleOption = roleOption;
+    this.grideList = grideList;
     this.ChangePermission();
+    this.getUserInfo();
   }
 }
 </script>

@@ -131,7 +131,9 @@ export default class CompanyForm extends Vue {
       ).then((res: any) => {
         if (res.data.code == 0) {
           Toast.success("提交成功！");
-          uni.navigateBack(-1);
+          uni.navigateBack({
+            delta: -1,
+          });
         } else {
           Toast.fail("提交失败！");
         }
