@@ -2,12 +2,15 @@
   <view>
     <u-subsection
       :list="list"
-      :current="1"
+      :current="current"
       active-color="#19be6b"
       inactive-color="#606266"
       @change="ChangeSubSection"
     ></u-subsection>
-    <recruitment-list></recruitment-list>
+    <recruitment-list
+      v-if="current == 0"
+      :companyID="company_id"
+    ></recruitment-list>
   </view>
 </template>
 
@@ -28,10 +31,15 @@ export default class CompanyRecruitmentPage extends Vue {
     },
   ];
   current: number = 0;
+  company_id: number = -1;
 
   //选项卡改变当前状态
   ChangeSubSection(index: number) {
-    console.log(index);
+    this.current = index;
+  }
+
+  onLoad(option: any) {
+    this.company_id = option.company_id;
   }
 }
 </script>

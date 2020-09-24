@@ -1,36 +1,68 @@
 <template>
   <view>
-    <u-card :title="title" :sub-title="subTitle" :thumb="thumb">
+    <view
+      class="empty"
+      :style="{ height: availableHeight + 'px' }"
+      v-if="isEmpty"
+    >
+      <u-empty
+        text="查询不到招聘信息"
+        mode="data"
+        color="#fa3534"
+        icon-color="#fa3534"
+      ></u-empty>
+    </view>
+
+    <u-card
+      :title="title"
+      :sub-title="subTitle"
+      :thumb="thumb"
+      v-show="!isEmpty"
+      v-for="(item, index) in list"
+      :key="index"
+    >
       <view class="" slot="body">
         <view class="u-body-item u-flex u-border-bottom u-col-between u-p-t-0">
-          <view class="u-body-item-title u-line-2"
-            >瓶身描绘的牡丹一如你初妆，冉冉檀香透过窗心事我了然，宣纸上走笔至此搁一半</view
-          >
-          <image
-            src="https://img11.360buyimg.com/n7/jfs/t1/94448/29/2734/524808/5dd4cc16E990dfb6b/59c256f85a8c3757.jpg"
-            mode="aspectFill"
-          ></image>
+          <view class="u-body-item-title u-line-2">{{
+            item.recruitment_info
+          }}</view>
         </view>
-        <view class="u-body-item u-flex u-row-between u-p-b-0">
-          <view class="u-body-item-title u-line-2"
-            >釉色渲染仕女图韵味被私藏，而你嫣然的一笑如含苞待放</view
-          >
-          <image
-            src="https://img12.360buyimg.com/n7/jfs/t1/102191/19/9072/330688/5e0af7cfE17698872/c91c00d713bf729a.jpg"
-            mode="aspectFill"
-          ></image>
-        </view>
+        <u-link :href="'http://127.0.0.1:7001/public/upload/' + item.enclosure">
+          <u-icon
+            :name="item.enclosure ? 'photo' : ''"
+            size="80"
+            :label="item.enclosure ? '点击文件下载' : '暂无文件'"
+            label-size="22"
+            margin-bottom="100"
+            label-color="#19be6b"
+          ></u-icon>
+        </u-link>
       </view>
-      <view class="" slot="foot"
-        ><u-icon name="chat-fill" size="34" color="" label="30评论"></u-icon
-      ></view>
+      <view class="" slot="foot">
+        <u-icon
+          name="chat-fill"
+          size="34"
+          color=""
+          :label="formatTime(item.start_time)"
+        >
+        </u-icon>
+        <p></p>
+        <u-icon
+          name="chat-fill"
+          size="34"
+          color=""
+          :label="formatTime(item.finish_time)"
+        >
+        </u-icon>
+      </view>
     </u-card>
   </view>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 import * as api from "../../../api/request";
+import moment from "moment";
 @Component({
   components: {},
 })
@@ -39,10 +71,49 @@ export default class RecruitmentList extends Vue {
   subTitle: string = "2020-05-15";
   thumb: string =
     "http://pic2.sc.chinaz.com/Files/pic/pic9/202002/hpic2119_s.jpg";
+  @Prop({}) companyID!: number;
+  availableHeight: number = 0;
+  isEmpty: boolean = false;
+  list: any = [];
+
+  //获取招聘信息列表
+  async getRecruitmentList(company_id: number) {
+    await api.BaseRequest.getRequest("/v1/recruitment?", {
+      company_id: company_id,
+    }).then((res: any) => {
+      if (res.data.data.length == 0) {
+        this.isEmpty = true;
+      } else {
+        this.list = res.data.data;
+      }
+    });
+  }
+
+  getWindowInfo() {
+    uni.getSystemInfo({
+      success: (res) => {
+        this.availableHeight = res.windowHeight - res.statusBarHeight;
+      },
+    });
+  }
+
+  //时间格式化
+  formatTime(time: string | Object) {
+    return moment(time).format("YYYY年MM月DD日 HH:mm:ss");
+  }
+
+  created() {
+    this.getRecruitmentList(this.companyID);
+    this.getWindowInfo();
+  }
 }
 </script>
 
 <style scoped lang="scss">
+body {
+  position: relative;
+}
+
 .u-card-wrap {
   background-color: $u-bg-color;
   padding: 1px;
@@ -60,5 +131,11 @@ export default class RecruitmentList extends Vue {
   height: 120rpx;
   border-radius: 8rpx;
   margin-left: 12rpx;
+}
+
+.empty {
+  width: 100%;
+  height: 654px;
+  background: #ffffff;
 }
 </style>
