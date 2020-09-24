@@ -3,14 +3,16 @@
     <view class="padding bg-white">
       <view
         class="cu-avatar xl round margin-left margin-top"
-        :style="{backgroundImage:'url(' + img + ')'}"
+        :style="{ backgroundImage: 'url(' + img + ')' }"
       ></view>
       <view class="padding-xs flex align-center">
         <view class="flex-sub text-center">
-          <view class="text-xl" style="margin-top:-70px;margin-bogttom:10px;">
+          <view class="text-xl" style="margin-top: -70px; margin-bogttom: 10px">
             <text class="text-black text-bold">欣欣如梦</text>
           </view>
-          <text class="padding">公司名</text>
+          <text class="padding"
+            >公司: {{ companyName ? companyName : "暂无公司" }}</text
+          >
         </view>
       </view>
       <view class="drop">
@@ -18,7 +20,7 @@
           <van-dropdown-item
             v-model="roleValue"
             :options="roleOption"
-            style="width:40px"
+            style="width: 40px"
             @change="PermissionChange"
           />
         </van-dropdown-menu>
@@ -27,9 +29,13 @@
 
     <view>
       <u-grid :col="3">
-        <u-grid-item v-for="(item,index) in grideList" :key="index" @click="PageJump(item)">
+        <u-grid-item
+          v-for="(item, index) in grideList"
+          :key="index"
+          @click="PageJump(item)"
+        >
           <u-icon :name="item.icon" :size="46"></u-icon>
-          <view class="grid-text">{{item.name}}</view>
+          <view class="grid-text">{{ item.name }}</view>
         </u-grid-item>
       </u-grid>
     </view>
@@ -49,6 +55,9 @@ export default class Home extends Vue {
   roleValue: string = "游客";
   roleOption: any = [];
   grideList: any = [];
+  user_id: number = -1;
+  companyName: string = "";
+  company_id: number = -1;
 
   //获取用户角色
   async getUserInfo() {
@@ -57,9 +66,11 @@ export default class Home extends Vue {
     }).then((res: any) => {
       if (res.data.code == 0) {
         this.roleValue = res.data.data.role;
+        this.user_id = res.data.data.id;
         this.ChangePermission();
       }
     });
+    this.getCompanyName();
   }
 
   //手动改变角色
@@ -92,7 +103,24 @@ export default class Home extends Vue {
       case "管理员审核":
         this.RouterRedirect("/pages/audit_records_page/index");
         break;
+      case "企业招聘信息":
+        this.RouterRedirect(
+          "/pages/company_recruitment_page/index?company_id=" + this.company_id
+        );
+        break;
     }
+  }
+
+  //获取公司名
+  async getCompanyName() {
+    await api.BaseRequest.getRequestWithPath(
+      "/v1/application/" + this.user_id
+    ).then((res: any) => {
+      if (res.data.data.length !== 0) {
+        this.companyName = res.data.data[0].company;
+        this.company_id = res.data.data[0].id;
+      }
+    });
   }
 
   onLoad() {

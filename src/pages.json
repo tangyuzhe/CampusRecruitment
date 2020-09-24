@@ -25,6 +25,12 @@
 			"style": {
 				"navigationBarTitleText": "公司详情"
 			}
+		},
+		{
+			"path": "pages/company_recruitment_page/index",
+			"style": {
+				"navigationBarTitleText": "企业招聘"
+			}
 		}
 	],
 	"globalStyle": {

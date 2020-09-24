@@ -19,6 +19,23 @@ export const BaseRequest = {
       })
     })
   },
+  getRequestWithPath: (url: string) => {
+    return new Promise((resolve, reject) => {
+      uni.request({
+        url: '/api' + url,
+        method: "GET",
+        header: {
+          "content-type": "application/json",
+        },
+        success: (res) => {
+          resolve(res)
+        },
+        fail: (res) => {
+          reject(res)
+        }
+      })
+    })
+  },
   postRequest: (url: string, data: any) => {
     return new Promise((resolve, reject) => {
       uni.request({
@@ -36,5 +53,23 @@ export const BaseRequest = {
         }
       })
     })
-  }
+  },
+  putRequest: (url: string, data: any) => {
+    return new Promise((resolve, reject) => {
+      uni.request({
+        url: '/api' + url,
+        method: "PUT",
+        data: data,
+        header: {
+          "content-type": "application/json",
+        },
+        success: (res) => {
+          resolve(res)
+        },
+        fail: (res) => {
+          reject(res)
+        }
+      })
+    })
+  },
 };
