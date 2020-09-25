@@ -1,5 +1,24 @@
 <template>
   <view>
+    <view class="wrap">
+      <u-row gutter="16">
+        <u-col span="5" offset="6">
+          <view class="demo-layout bg-purple">
+            <u-button
+              type="primary"
+              size="medium"
+              shape="circle"
+              plain
+              @click="recruitmentForm = true"
+            >
+              <u-icon name="plus"></u-icon>
+              添加招聘信息</u-button
+            >
+          </view>
+        </u-col>
+      </u-row>
+    </view>
+
     <view
       class="empty"
       :style="{ height: availableHeight + 'px' }"
@@ -15,8 +34,7 @@
 
     <u-card
       :title="title"
-      :sub-title="subTitle"
-      :thumb="thumb"
+      :sub-title="formatTime(item.time)"
       v-show="!isEmpty"
       v-for="(item, index) in list"
       :key="index"
@@ -40,22 +58,35 @@
       </view>
       <view class="" slot="foot">
         <u-icon
-          name="chat-fill"
           size="34"
           color=""
-          :label="formatTime(item.start_time)"
+          :label="'开始时间：' + formatTime(item.start_time)"
         >
         </u-icon>
         <p></p>
         <u-icon
-          name="chat-fill"
           size="34"
           color=""
-          :label="formatTime(item.finish_time)"
+          :label="'结束时间：' + formatTime(item.finish_time)"
         >
         </u-icon>
       </view>
     </u-card>
+
+    <u-loadmore :status="status" @loadmore="loadmore" :load-text="loadText" />
+
+    <u-popup
+      v-model="recruitmentForm"
+      border-radius="14"
+      mode="bottom"
+      height="500px"
+      closeable
+    >
+      <recruitment-form
+        :companyID="companyID"
+        @closeForm="getData"
+      ></recruitment-form>
+    </u-popup>
   </view>
 </template>
 
@@ -63,32 +94,49 @@
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 import * as api from "../../../api/request";
 import moment from "moment";
+import RecruitmentForm from "./recruitmentForm.vue";
 @Component({
-  components: {},
+  components: { RecruitmentForm },
 })
 export default class RecruitmentList extends Vue {
-  title: string = "";
-  subTitle: string = "2020-05-15";
-  thumb: string =
-    "http://pic2.sc.chinaz.com/Files/pic/pic9/202002/hpic2119_s.jpg";
+  title: string = "发布时间";
   @Prop({}) companyID!: number;
   availableHeight: number = 0;
   isEmpty: boolean = false;
   list: any = [];
+  currentPage: number = 1;
+  pageSize: number = 10;
+  status: string = "loadmore";
+  loadText: object = {
+    loadmore: "轻轻上拉加载",
+    loading: "努力加载中",
+    nomore: "没有更多了",
+  };
+  recruitmentForm: boolean = false;
 
   //获取招聘信息列表
-  async getRecruitmentList(company_id: number) {
+  async getRecruitmentList(
+    company_id: number,
+    currentPage: number,
+    pageSize: number
+  ) {
     await api.BaseRequest.getRequest("/v1/recruitment?", {
       company_id: company_id,
+      currentPage: currentPage,
+      pageSize: pageSize,
     }).then((res: any) => {
-      if (res.data.data.length == 0) {
+      if (res.data.data.count == 0) {
         this.isEmpty = true;
       } else {
-        this.list = res.data.data;
+        this.list = this.list.concat(res.data.data.rows);
+        if (this.list.length === res.data.data.count) {
+          this.status = "nomore";
+        }
       }
     });
   }
 
+  //获取可用窗口的高度
   getWindowInfo() {
     uni.getSystemInfo({
       success: (res) => {
@@ -102,8 +150,26 @@ export default class RecruitmentList extends Vue {
     return moment(time).format("YYYY年MM月DD日 HH:mm:ss");
   }
 
+  //上拉加载更多
+  loadmore() {
+    this.status = "loading";
+    this.currentPage++;
+    setTimeout(() => {
+      this.getRecruitmentList(this.companyID, this.currentPage, this.pageSize);
+    }, 2000);
+  }
+
+  //父组件获取子组件的参数
+  getData(val: boolean) {
+    this.recruitmentForm = val;
+    this.currentPage = 1;
+    this.list = [];
+    this.status = "loadmore";
+    this.getRecruitmentList(this.companyID, this.currentPage, this.pageSize);
+  }
+
   created() {
-    this.getRecruitmentList(this.companyID);
+    this.getRecruitmentList(this.companyID, this.currentPage, this.pageSize);
     this.getWindowInfo();
   }
 }
@@ -137,5 +203,14 @@ body {
   width: 100%;
   height: 654px;
   background: #ffffff;
+}
+
+.demo-layout {
+  height: 60rpx;
+  border-radius: 8rpx;
+}
+
+.bg-purple {
+  background: #e8ebee;
 }
 </style>
