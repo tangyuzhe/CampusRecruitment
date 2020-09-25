@@ -2,13 +2,12 @@
   <view>
     <view class="wrap">
       <u-row gutter="16">
-        <u-col span="5" offset="6">
+        <u-col span="3" offset="6">
           <view class="demo-layout bg-purple">
             <u-button
               type="primary"
               size="medium"
               shape="circle"
-              plain
               @click="recruitmentForm = true"
             >
               <u-icon name="plus"></u-icon>
@@ -58,6 +57,22 @@
       </view>
       <view class="" slot="foot">
         <u-icon
+          class="add"
+          name="plus"
+          label="点我添加岗位"
+          label-size="12"
+          @click="addStation"
+        ></u-icon>
+        <p></p>
+        <u-icon
+          class="station"
+          name="eye"
+          label="点我查看岗位"
+          label-size="12"
+          @click="WatchStation(item)"
+        ></u-icon>
+        <p></p>
+        <u-icon
           size="34"
           color=""
           :label="'开始时间：' + formatTime(item.start_time)"
@@ -73,8 +88,14 @@
       </view>
     </u-card>
 
-    <u-loadmore :status="status" @loadmore="loadmore" :load-text="loadText" />
+    <u-loadmore
+      :status="status"
+      @loadmore="loadmore"
+      :load-text="loadText"
+      v-if="!isEmpty"
+    />
 
+    <!-- 招聘岗位表单 -->
     <u-popup
       v-model="recruitmentForm"
       border-radius="14"
@@ -87,16 +108,41 @@
         @closeForm="getData"
       ></recruitment-form>
     </u-popup>
+
+    <!-- 岗位列表 -->
+    <u-popup
+      v-model="stationList"
+      border-radius="14"
+      closeable
+      mode="left"
+      width="600"
+    >
+      <station-list
+        class="margin-top"
+        :recruitmentID="recruitmentID"
+      ></station-list>
+    </u-popup>
+
+    <!-- 添加岗位表单 -->
+    <u-popup
+      v-model="addStationForm"
+      border-radius="14"
+      closeable
+      mode="bottom"
+      width="600"
+    >
+    </u-popup>
   </view>
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue, Watch } from "vue-property-decorator";
+import { Component, Prop, Vue, Watch, Emit } from "vue-property-decorator";
 import * as api from "../../../api/request";
 import moment from "moment";
 import RecruitmentForm from "./recruitmentForm.vue";
+import StationList from "./stationList.vue";
 @Component({
-  components: { RecruitmentForm },
+  components: { RecruitmentForm, StationList },
 })
 export default class RecruitmentList extends Vue {
   title: string = "发布时间";
@@ -113,6 +159,9 @@ export default class RecruitmentList extends Vue {
     nomore: "没有更多了",
   };
   recruitmentForm: boolean = false;
+  stationList: boolean = false;
+  addStationForm: boolean = false;
+  recruitmentID: number = -1;
 
   //获取招聘信息列表
   async getRecruitmentList(
@@ -168,6 +217,17 @@ export default class RecruitmentList extends Vue {
     this.getRecruitmentList(this.companyID, this.currentPage, this.pageSize);
   }
 
+  //查看岗位
+  WatchStation(item: any) {
+    this.stationList = true;
+    this.recruitmentID = item.id;
+  }
+
+  //添加岗位
+  addStation() {
+    this.addStationForm = true;
+  }
+
   created() {
     this.getRecruitmentList(this.companyID, this.currentPage, this.pageSize);
     this.getWindowInfo();
@@ -212,5 +272,17 @@ body {
 
 .bg-purple {
   background: #e8ebee;
+}
+
+.station {
+  position: absolute;
+  right: 10px;
+  top: -5px;
+}
+
+.add {
+  position: absolute;
+  right: 10px;
+  top: -25px;
 }
 </style>

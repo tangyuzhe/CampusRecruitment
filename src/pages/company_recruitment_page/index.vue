@@ -1,12 +1,12 @@
 <template>
   <view>
-    <u-subsection
+    <!-- <u-subsection
       :list="list"
       :current="current"
       active-color="#19be6b"
       inactive-color="#606266"
       @change="ChangeSubSection"
-    ></u-subsection>
+    ></u-subsection> -->
     <recruitment-list
       v-if="current == 0"
       :companyID="company_id"
@@ -25,9 +25,6 @@ export default class CompanyRecruitmentPage extends Vue {
   list: any = [
     {
       name: "招聘记录",
-    },
-    {
-      name: "岗位查询",
     },
   ];
   current: number = 0;
