@@ -15,10 +15,7 @@
       </u-form-item>
 
       <u-form-item label="招聘人数" label-width="200">
-        <u-number-box
-          v-model="Station.recruit_number"
-          @change="recruit_number_change"
-        ></u-number-box>
+        <u-number-box v-model="Station.recruit_number"></u-number-box>
       </u-form-item>
     </u-form>
     <u-button type="primary" @click="submit">提交</u-button>
@@ -34,22 +31,28 @@ import moment from "moment";
   components: {},
 })
 export default class StationForm extends Vue {
-  @Prop({}) companyID!: number;
+  @Prop({}) recruitmentID!: number;
   Station: any = {
     recruit_number: 0,
   };
 
   //子组件传父组件关闭弹窗
-  @Emit("closeForm") closeForm(data: boolean) {}
+  @Emit("closeStationForm") closeForm(data: boolean) {}
 
-  //recruit_number_change
-  recruit_number_change(e: any) {
-    // this.Station.recruit_number = e.val;
+  mounted() {
+    this.Station.recruitment_id = this.recruitmentID;
   }
 
   //提交
   async submit() {
-    console.log(this.Station);
+    await api.BaseRequest.postRequest("/v1/station", this.Station).then(
+      (res: any) => {
+        if (res.data.code == 0) {
+          Toast.success("提交成功！");
+          this.closeForm(false);
+        }
+      }
+    );
   }
 }
 </script>

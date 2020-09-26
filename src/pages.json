@@ -2,7 +2,8 @@
 	"easycom": {
 		"^u-(.*)": "uview-ui/components/u-$1/u-$1.vue"
 	},
-	"pages": [{
+	"pages": [
+		{
 			"path": "pages/home/index",
 			"style": {
 				"navigationBarTitleText": "主页"
@@ -36,6 +37,12 @@
 			"path": "pages/companyDetail/index",
 			"style": {
 				"navigationBarTitleText": "我的企业"
+			}
+		},
+		{
+			"path": "pages/company_recruitment_page/components/stationList",
+			"style": {
+				"navigationBarTitleText": "岗位列表"
 			}
 		}
 	],

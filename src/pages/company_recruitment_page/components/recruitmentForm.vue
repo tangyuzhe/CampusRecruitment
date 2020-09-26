@@ -115,7 +115,6 @@ export default class RecruitmentForm extends Vue {
     let date = val.year + "-" + val.month + "-" + val.day;
     let time = val.hour + ":" + val.minute + ":" + val.second;
     this.Recruitment.start_time = date + " " + time;
-    this;
   }
 
   selectFinishedTime(val: any) {

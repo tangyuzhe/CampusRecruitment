@@ -1,22 +1,13 @@
 <template>
   <view>
-    <view class="wrap">
-      <u-row gutter="16">
-        <u-col span="3" offset="6">
-          <view class="demo-layout bg-purple">
-            <u-button
-              type="primary"
-              size="medium"
-              shape="circle"
-              @click="recruitmentForm = true"
-            >
-              <u-icon name="plus"></u-icon>
-              添加招聘信息</u-button
-            >
-          </view>
-        </u-col>
-      </u-row>
-    </view>
+    <u-button
+      class="add_btn"
+      type="primary"
+      size="medium"
+      @click="recruitmentForm = true"
+    >
+      <u-icon name="plus"></u-icon>添加招聘信息
+    </u-button>
 
     <view
       class="empty"
@@ -65,8 +56,18 @@
           type="primary"
           size="mini"
           class="margin-left margin-top"
-          @click="addStation"
+          @click="addStation(item)"
           >添加岗位</u-button
+        >
+        <u-button
+          type="primary"
+          size="mini"
+          class="margin-left margin-top"
+          @click="openClassroomForm(item)"
+          >申请教室</u-button
+        >
+        <u-button type="primary" size="mini" class="margin-left margin-top"
+          >教室记录</u-button
         >
       </view>
     </u-card>
@@ -88,22 +89,8 @@
     >
       <recruitment-form
         :companyID="companyID"
-        @closeForm="getData"
+        @closeForm="getDataOfRecruitmentForm"
       ></recruitment-form>
-    </u-popup>
-
-    <!-- 岗位列表 -->
-    <u-popup
-      v-model="stationList"
-      border-radius="14"
-      closeable
-      mode="left"
-      width="600"
-    >
-      <station-list
-        class="margin-top"
-        :recruitmentID="recruitmentID"
-      ></station-list>
     </u-popup>
 
     <!-- 添加岗位表单 -->
@@ -114,7 +101,25 @@
       mode="bottom"
       width="600"
     >
-      <station-form></station-form>
+      <station-form
+        :recruitmentID="recruitmentID"
+        @closeStationForm="getStationFormData"
+      ></station-form>
+    </u-popup>
+
+    <!-- 教室申请 -->
+    <u-popup
+      v-model="classroomForm"
+      border-radius="14"
+      closeable
+      mode="center"
+      width="600"
+      height="600"
+    >
+      <classroom-application-form
+        :recruitmentID="recruitmentID"
+        @closeClassroomForm="getClassroomFormData"
+      ></classroom-application-form>
     </u-popup>
   </view>
 </template>
@@ -126,8 +131,14 @@ import moment from "moment";
 import RecruitmentForm from "./recruitmentForm.vue";
 import StationList from "./stationList.vue";
 import StationForm from "./stationForm.vue";
+import ClassroomApplicationForm from "./classroomForm.vue";
 @Component({
-  components: { RecruitmentForm, StationList, StationForm },
+  components: {
+    RecruitmentForm,
+    StationList,
+    StationForm,
+    ClassroomApplicationForm,
+  },
 })
 export default class RecruitmentList extends Vue {
   title: string = "发布时间";
@@ -146,6 +157,7 @@ export default class RecruitmentList extends Vue {
   recruitmentForm: boolean = false;
   stationList: boolean = false;
   addStationForm: boolean = false;
+  classroomForm: boolean = false;
   recruitmentID: number = -1;
 
   //获取招聘信息列表
@@ -193,8 +205,8 @@ export default class RecruitmentList extends Vue {
     }, 2000);
   }
 
-  //父组件获取子组件的参数
-  getData(val: boolean) {
+  //关闭招聘记录表单
+  getDataOfRecruitmentForm(val: boolean) {
     this.recruitmentForm = val;
     this.currentPage = 1;
     this.list = [];
@@ -202,15 +214,34 @@ export default class RecruitmentList extends Vue {
     this.getRecruitmentList(this.companyID, this.currentPage, this.pageSize);
   }
 
-  //查看岗位
+  //关闭岗位申请表单
+  getStationFormData(val: boolean) {
+    this.addStationForm = val;
+  }
+
+  //关闭教室申请表单
+  getClassroomFormData(val: boolean) {
+    this.classroomForm = val;
+  }
+
+  //查看岗位页面跳转
   WatchStation(item: any) {
-    this.stationList = true;
-    this.recruitmentID = item.id;
+    uni.navigateTo({
+      url:
+        "/pages/company_recruitment_page/components/stationList?recruitment_id=" +
+        item.id,
+    });
   }
 
   //添加岗位
-  addStation() {
+  addStation(item: any) {
     this.addStationForm = true;
+    this.recruitmentID = item.id;
+  }
+
+  openClassroomForm(item: any) {
+    this.classroomForm = true;
+    this.recruitmentID = item.id;
   }
 
   created() {
@@ -269,5 +300,10 @@ body {
   position: absolute;
   right: 10px;
   top: -45px;
+}
+
+.add_btn {
+  margin: 0 5%;
+  width: 90%;
 }
 </style>
