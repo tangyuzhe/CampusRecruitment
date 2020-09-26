@@ -105,9 +105,7 @@ export default class CompanyForm extends Vue {
   scaleActionSheet: boolean = false;
   areaCode: any = ["13", "1303", "130304"];
   address: string = "";
-  Application: any = {
-    country: "中国",
-  };
+  Application: any = {};
   CompanyNatureList: any = [];
   CompanyScaleList: any = [];
   action: string = "http://127.0.0.1:7001/api/v1/upload";
@@ -140,8 +138,8 @@ export default class CompanyForm extends Vue {
         message: "正在提交中，请等候...",
         forbidClick: true,
       });
-      api.BaseRequest.postRequest(
-        "/v1/companyApplication",
+      api.BaseRequest.putRequest(
+        "/v1/company/" + this.Application.id,
         this.Application
       ).then((res: any) => {
         if (res.data.code == 0) {
@@ -188,6 +186,7 @@ export default class CompanyForm extends Vue {
     this.CompanyScaleList = CompanyScaleList;
     this.CompanyNatureList = CompanyNatureList;
     this.getUserInfo();
+    this.Application.country = "中国";
   }
 
   mounted() {

@@ -56,35 +56,18 @@
         </u-link>
       </view>
       <view class="" slot="foot">
-        <u-icon
-          class="add"
-          name="plus"
-          label="点我添加岗位"
-          label-size="12"
+        <view>{{ "开始时间:" + formatTime(item.start_time) }}</view>
+        <view>{{ "结束时间:" + formatTime(item.finish_time) }}</view>
+        <u-button type="primary" size="mini" @click="WatchStation(item)"
+          >查看岗位</u-button
+        >
+        <u-button
+          type="primary"
+          size="mini"
+          class="margin-left margin-top"
           @click="addStation"
-        ></u-icon>
-        <p></p>
-        <u-icon
-          class="station"
-          name="eye"
-          label="点我查看岗位"
-          label-size="12"
-          @click="WatchStation(item)"
-        ></u-icon>
-        <p></p>
-        <u-icon
-          size="34"
-          color=""
-          :label="'开始时间：' + formatTime(item.start_time)"
+          >添加岗位</u-button
         >
-        </u-icon>
-        <p></p>
-        <u-icon
-          size="34"
-          color=""
-          :label="'结束时间：' + formatTime(item.finish_time)"
-        >
-        </u-icon>
       </view>
     </u-card>
 
@@ -131,6 +114,7 @@
       mode="bottom"
       width="600"
     >
+      <station-form></station-form>
     </u-popup>
   </view>
 </template>
@@ -141,8 +125,9 @@ import * as api from "../../../api/request";
 import moment from "moment";
 import RecruitmentForm from "./recruitmentForm.vue";
 import StationList from "./stationList.vue";
+import StationForm from "./stationForm.vue";
 @Component({
-  components: { RecruitmentForm, StationList },
+  components: { RecruitmentForm, StationList, StationForm },
 })
 export default class RecruitmentList extends Vue {
   title: string = "发布时间";
@@ -277,12 +262,12 @@ body {
 .station {
   position: absolute;
   right: 10px;
-  top: -5px;
+  top: -15px;
 }
 
 .add {
   position: absolute;
   right: 10px;
-  top: -25px;
+  top: -45px;
 }
 </style>

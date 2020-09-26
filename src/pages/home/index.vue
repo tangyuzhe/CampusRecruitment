@@ -108,7 +108,7 @@ export default class Home extends Vue {
           "/pages/company_recruitment_page/index?company_id=" + this.company_id
         );
         break;
-      case "我的企业":
+      case "企业信息修改":
         this.RouterRedirect(
           "/pages/companyDetail/index?company_id=" + this.company_id
         );

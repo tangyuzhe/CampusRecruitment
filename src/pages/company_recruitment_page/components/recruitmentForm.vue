@@ -1,6 +1,6 @@
 <template>
   <view class="wrap">
-    <text class="title">招聘申请</text>
+    <text class="title">招聘信息</text>
     <u-form ref="uForm" class="margin-top">
       <u-form-item label="招聘信息" label-width="200">
         <u-input
