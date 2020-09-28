@@ -1,6 +1,6 @@
 <template>
   <view class="wrap">
-    <text class="title">岗位添加</text>
+    <text class="title">{{ option == 1 ? "岗位修改" : "岗位添加" }}</text>
     <u-form ref="uForm" class="margin-top">
       <u-form-item label="岗位名称" label-width="200">
         <u-input v-model="Station.station" border />
@@ -18,12 +18,14 @@
         <u-number-box v-model="Station.recruit_number"></u-number-box>
       </u-form-item>
     </u-form>
-    <u-button type="primary" @click="submit">提交</u-button>
+    <u-button :type="option == 1 ? 'warning' : 'primary'" @click="submit">{{
+      option == 1 ? "修改" : "提交"
+    }}</u-button>
   </view>
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop, Emit } from "vue-property-decorator";
+import { Component, Vue, Prop, Emit, Watch } from "vue-property-decorator";
 import * as api from "../../../api/request";
 import { Toast } from "vant";
 import moment from "moment";
@@ -32,27 +34,57 @@ import moment from "moment";
 })
 export default class StationForm extends Vue {
   @Prop({}) recruitmentID!: number;
+  @Prop({}) id!: number;
+  @Prop({}) stationData: any;
   Station: any = {
     recruit_number: 0,
   };
+  option: number = -1; //0为添加，1为修改
 
   //子组件传父组件关闭弹窗
   @Emit("closeStationForm") closeForm(data: boolean) {}
 
   mounted() {
     this.Station.recruitment_id = this.recruitmentID;
+    if (Object.keys(this.stationData).length != 0) {
+      this.option = 1;
+      this.Station = this.stationData;
+    } else {
+      this.option = 0;
+    }
   }
 
   //提交
   async submit() {
+    if (this.option == 0) {
+      this.addStation();
+    } else {
+      this.updateStation();
+    }
+  }
+
+  //添加
+  async addStation() {
     await api.BaseRequest.postRequest("/v1/station", this.Station).then(
       (res: any) => {
         if (res.data.code == 0) {
-          Toast.success("提交成功！");
+          Toast.success("添加成功！");
           this.closeForm(false);
         }
       }
     );
+  }
+
+  async updateStation() {
+    await api.BaseRequest.putRequest(
+      "/v1/station/" + this.Station.id,
+      this.Station
+    ).then((res: any) => {
+      if (res.data.code == 0) {
+        Toast.success("修改成功！");
+        this.closeForm(false);
+      }
+    });
   }
 }
 </script>

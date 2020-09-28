@@ -54,6 +54,7 @@ export const BaseRequest = {
       })
     })
   },
+  //传data数据修改
   putRequest: (url: string, data: any) => {
     return new Promise((resolve, reject) => {
       uni.request({
@@ -72,4 +73,22 @@ export const BaseRequest = {
       })
     })
   },
+  //使用URL进行修改
+  putRequestWithParams: (url: string, data: any) => {
+    return new Promise((resolve, reject) => {
+      uni.request({
+        url: '/api' + url + qs.stringify(data),
+        method: "PUT",
+        header: {
+          "content-type": "application/json",
+        },
+        success: (res) => {
+          resolve(res)
+        },
+        fail: (res) => {
+          reject(res)
+        }
+      })
+    })
+  }
 };

@@ -56,17 +56,7 @@
           type="primary"
           size="mini"
           class="margin-left margin-top"
-          @click="addStation(item)"
-          >添加岗位</u-button
-        >
-        <u-button
-          type="primary"
-          size="mini"
-          class="margin-left margin-top"
-          @click="openClassroomForm(item)"
-          >申请教室</u-button
-        >
-        <u-button type="primary" size="mini" class="margin-left margin-top"
+          @click="WatchArrangement(item)"
           >教室记录</u-button
         >
       </view>
@@ -91,35 +81,6 @@
         :companyID="companyID"
         @closeForm="getDataOfRecruitmentForm"
       ></recruitment-form>
-    </u-popup>
-
-    <!-- 添加岗位表单 -->
-    <u-popup
-      v-model="addStationForm"
-      border-radius="14"
-      closeable
-      mode="bottom"
-      width="600"
-    >
-      <station-form
-        :recruitmentID="recruitmentID"
-        @closeStationForm="getStationFormData"
-      ></station-form>
-    </u-popup>
-
-    <!-- 教室申请 -->
-    <u-popup
-      v-model="classroomForm"
-      border-radius="14"
-      closeable
-      mode="center"
-      width="600"
-      height="600"
-    >
-      <classroom-application-form
-        :recruitmentID="recruitmentID"
-        @closeClassroomForm="getClassroomFormData"
-      ></classroom-application-form>
     </u-popup>
   </view>
 </template>
@@ -155,10 +116,6 @@ export default class RecruitmentList extends Vue {
     nomore: "没有更多了",
   };
   recruitmentForm: boolean = false;
-  stationList: boolean = false;
-  addStationForm: boolean = false;
-  classroomForm: boolean = false;
-  recruitmentID: number = -1;
 
   //获取招聘信息列表
   async getRecruitmentList(
@@ -214,16 +171,6 @@ export default class RecruitmentList extends Vue {
     this.getRecruitmentList(this.companyID, this.currentPage, this.pageSize);
   }
 
-  //关闭岗位申请表单
-  getStationFormData(val: boolean) {
-    this.addStationForm = val;
-  }
-
-  //关闭教室申请表单
-  getClassroomFormData(val: boolean) {
-    this.classroomForm = val;
-  }
-
   //查看岗位页面跳转
   WatchStation(item: any) {
     uni.navigateTo({
@@ -233,15 +180,13 @@ export default class RecruitmentList extends Vue {
     });
   }
 
-  //添加岗位
-  addStation(item: any) {
-    this.addStationForm = true;
-    this.recruitmentID = item.id;
-  }
-
-  openClassroomForm(item: any) {
-    this.classroomForm = true;
-    this.recruitmentID = item.id;
+  //教室记录页面跳转
+  WatchArrangement(item: any) {
+    uni.navigateTo({
+      url:
+        "/pages/company_recruitment_page/components/classroomList?recruitment_id=" +
+        item.id,
+    });
   }
 
   created() {

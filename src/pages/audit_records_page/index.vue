@@ -13,8 +13,11 @@
       ></u-tabs-swiper>
     </view>
 
-    <view class="wrap margin-top" v-if="currentTab===0">
+    <view class="wrap margin-top" v-if="currentTab === 0">
       <application-records-table></application-records-table>
+    </view>
+    <view class="wrap margin-top" v-if="currentTab === 2">
+      <classroom-arrangement-list></classroom-arrangement-list>
     </view>
   </view>
 </template>
@@ -23,9 +26,11 @@
 import { Component, Vue } from "vue-property-decorator";
 import * as api from "../../api/request";
 import ApplicationRecordsTable from "./recordsTable/applicationRecords.vue";
+import ClassroomArrangementList from "./recordsTable/classroomArrangement.vue";
 @Component({
   components: {
     ApplicationRecordsTable,
+    ClassroomArrangementList,
   },
 })
 export default class AuditRecordsPage extends Vue {

@@ -24,7 +24,7 @@
       <u-form-item label="结束时间" label-width="200">
         <u-input
           type="select"
-          v-model="classroomApplication.finish_time"
+          v-model="classroomApplication.finished_time"
           border
           @click="finished_time = true"
         />
@@ -84,7 +84,7 @@ export default class ClassroomApplicationForm extends Vue {
   selectFinishedTime(val: any) {
     let date = val.year + "-" + val.month + "-" + val.day;
     let time = val.hour + ":" + val.minute + ":" + val.second;
-    this.classroomApplication.finish_time = date + " " + time;
+    this.classroomApplication.finished_time = date + " " + time;
   }
 
   //提交

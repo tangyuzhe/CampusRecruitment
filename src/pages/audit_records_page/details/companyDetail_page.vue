@@ -51,7 +51,7 @@
             alt="未提交图片"
             mode="widthFix"
             v-if="company.uuid"
-            style="height: 100px; width: 200px"
+            style="height: 150px; width: 150px"
           ></u-image>
           <u-empty text="暂无营业执照" v-else></u-empty>
         </u-td>
