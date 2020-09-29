@@ -16,6 +16,9 @@
     <view class="wrap margin-top" v-if="currentTab === 0">
       <application-records-table></application-records-table>
     </view>
+    <view class="wrap margin-top" v-if="currentTab === 1">
+      <admin-application></admin-application>
+    </view>
     <view class="wrap margin-top" v-if="currentTab === 2">
       <classroom-arrangement-list></classroom-arrangement-list>
     </view>
@@ -26,10 +29,12 @@
 import { Component, Vue } from "vue-property-decorator";
 import * as api from "../../api/request";
 import ApplicationRecordsTable from "./recordsTable/applicationRecords.vue";
+import AdminApplication from "./recordsTable/adminRecords.vue";
 import ClassroomArrangementList from "./recordsTable/classroomArrangement.vue";
 @Component({
   components: {
     ApplicationRecordsTable,
+    AdminApplication,
     ClassroomArrangementList,
   },
 })

@@ -10,8 +10,11 @@
           <view class="text-xl" style="margin-top: -70px; margin-bogttom: 10px">
             <text class="text-black text-bold">欣欣如梦</text>
           </view>
-          <text class="padding"
-            >公司: {{ companyName ? companyName : "暂无公司" }}</text
+          <text class="padding" v-show="roleValue == '企业'"
+            >公司: {{ companyName }}</text
+          >
+          <text class="padding" v-show="roleValue == '管理员'"
+            >工号: {{ work_id }}</text
           >
         </view>
       </view>
@@ -46,6 +49,7 @@
 import { Component, Vue } from "vue-property-decorator";
 import * as api from "../../api/request";
 import { roleOption, grideList } from "../../util/dataList";
+import qs from "qs";
 @Component({
   components: {},
 })
@@ -58,15 +62,17 @@ export default class Home extends Vue {
   user_id: number = -1;
   companyName: string = "";
   company_id: number = -1;
-
+  work_id: string = "";
   //获取用户角色
   async getUserInfo() {
     await api.BaseRequest.getRequest("/v1/user?", {
       openid: "oeJ85uJDWaMNq33UN9V7vFfuJ0P0",
     }).then((res: any) => {
+      console.log(res);
       if (res.data.code == 0) {
         this.roleValue = res.data.data.role;
         this.user_id = res.data.data.id;
+        this.work_id = res.data.data.work_id;
         this.ChangePermission();
       }
     });
@@ -112,6 +118,13 @@ export default class Home extends Vue {
         this.RouterRedirect(
           "/pages/companyDetail/index?company_id=" + this.company_id
         );
+        break;
+      case "我的企业信息":
+        let data = {
+          company_id: this.company_id,
+          role: this.roleValue,
+        };
+        this.RouterRedirect("/pages/companyDetail/index?" + qs.stringify(data));
         break;
     }
   }

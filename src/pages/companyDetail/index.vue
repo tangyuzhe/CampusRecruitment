@@ -7,14 +7,16 @@
           placeholder="请输入您的企业名称"
           :trim="!bool"
           :focus="!bool"
+          :disabled="disabled"
         />
       </u-form-item>
 
       <u-form-item label="公司地址" label-width="200">
         <u-input
+          type="select"
           v-model="address"
           placeholder="请选择公司地址"
-          @click="bool = true"
+          @click="disabled ? (bool = false) : (bool = true)"
         />
         <u-picker
           mode="region"
@@ -28,7 +30,9 @@
         <u-input
           v-model="Application.nature"
           placeholder="请选择公司性质"
-          @click="natureActionSheet = true"
+          @click="
+            disabled ? (natureActionSheet = false) : (natureActionSheet = true)
+          "
           type="select"
         />
         <u-action-sheet
@@ -42,7 +46,9 @@
         <u-input
           v-model="Application.scale"
           placeholder="请选择企业规模"
-          @click="scaleActionSheet = true"
+          @click="
+            disabled ? (scaleActionSheet = false) : (scaleActionSheet = true)
+          "
           type="select"
         />
         <u-action-sheet
@@ -59,7 +65,8 @@
           placeholder="请输入您的企业简介(不超过150字)"
           height="200"
           maxlength="150"
-          :border="1 == 1"
+          border
+          :disabled="disabled"
         />
       </u-form-item>
 
@@ -67,6 +74,7 @@
         <u-input
           v-model="Application.offical_website"
           placeholder="请填写您的企业官网"
+          :disabled="disabled"
         />
       </u-form-item>
 
@@ -74,11 +82,22 @@
         <u-input
           v-model="Application.recruitment_website"
           placeholder="请填写您的企业招聘网站"
+          :disabled="disabled"
         />
       </u-form-item>
 
-      <u-form-item label="上传营业执照" label-width="200" prop="uuid">
-        <u-upload max-count="1" ref="uUpload" :action="action"></u-upload>
+      <u-form-item label="营业执照" label-width="200" prop="uuid">
+        <u-upload
+          v-show="!disabled"
+          max-count="1"
+          ref="uUpload"
+          :action="action"
+        ></u-upload>
+        <image
+          v-show="disabled"
+          :src="'http://127.0.0.1:7001/public/upload/' + Application.uuid"
+          style="width: 100%; height: 200rpx"
+        ></image>
       </u-form-item>
 
       <u-form-item label="提交时间" label-width="200">
@@ -86,7 +105,7 @@
       </u-form-item>
     </u-form>
 
-    <u-button type="warning " @click="modify">修改</u-button>
+    <u-button type="warning " @click="modify" v-show="!disabled">修改</u-button>
   </view>
 </template>
 
@@ -125,6 +144,7 @@ export default class CompanyForm extends Vue {
       },
     ],
   };
+  disabled: boolean = false;
 
   async modify() {
     let list = [];
@@ -209,6 +229,10 @@ export default class CompanyForm extends Vue {
   }
 
   onLoad(option: any) {
+    console.log(option);
+    if (option.role == "企业") {
+      this.disabled = true;
+    }
     this.getCompanyInfo(option.company_id);
   }
 }
