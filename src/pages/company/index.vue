@@ -4,18 +4,36 @@
       <u-form-item label="企业名称" label-width="200" prop="company">
         <u-input
           v-model="Application.company"
-          placeholder="请输入您的企业名称"
           :trim="!bool"
           :focus="!bool"
           :disabled="disabled"
+          border
         />
       </u-form-item>
 
-      <u-form-item label="公司地址" label-width="200">
+      <!-- 审核记录 -->
+      <u-form-item label="审核情况" label-width="200" v-if="!toUpdate">
+        <u-input :value="audit_situation" :disabled="disabled" border />
+      </u-form-item>
+
+      <u-form-item label="审核说明" label-width="200" v-if="!toUpdate">
+        <u-input
+          :value="audit_instructions"
+          :disabled="disabled"
+          type="textarea"
+          height="200"
+          placeholder=""
+          border
+        />
+      </u-form-item>
+
+      <!-- 信息修改 -->
+      <u-form-item label="公司地址" label-width="200" v-if="toUpdate">
         <u-input
           type="select"
           v-model="address"
           placeholder="请选择公司地址"
+          border
           @click="disabled ? (bool = false) : (bool = true)"
         />
         <u-picker
@@ -26,10 +44,11 @@
         ></u-picker>
       </u-form-item>
 
-      <u-form-item label="企业性质" label-width="200">
+      <u-form-item label="企业性质" label-width="200" v-if="toUpdate">
         <u-input
           v-model="Application.nature"
           placeholder="请选择公司性质"
+          border
           @click="
             disabled ? (natureActionSheet = false) : (natureActionSheet = true)
           "
@@ -42,10 +61,11 @@
         ></u-action-sheet>
       </u-form-item>
 
-      <u-form-item label="企业规模" label-width="200">
+      <u-form-item label="企业规模" label-width="200" v-if="toUpdate">
         <u-input
           v-model="Application.scale"
           placeholder="请选择企业规模"
+          border
           @click="
             disabled ? (scaleActionSheet = false) : (scaleActionSheet = true)
           "
@@ -58,7 +78,7 @@
         ></u-action-sheet>
       </u-form-item>
 
-      <u-form-item label="企业简介" label-width="200">
+      <u-form-item label="企业简介" label-width="200" v-if="toUpdate">
         <u-input
           type="textarea"
           v-model="Application.introduction"
@@ -70,23 +90,31 @@
         />
       </u-form-item>
 
-      <u-form-item label="企业官网" label-width="200">
+      <u-form-item label="企业官网" label-width="200" v-if="toUpdate">
         <u-input
           v-model="Application.offical_website"
           placeholder="请填写您的企业官网"
           :disabled="disabled"
+          border
         />
       </u-form-item>
 
-      <u-form-item label="招聘网站" label-width="200">
+      <u-form-item label="招聘网站" label-width="200" v-if="toUpdate">
         <u-input
           v-model="Application.recruitment_website"
           placeholder="请填写您的企业招聘网站"
           :disabled="disabled"
+          border
         />
       </u-form-item>
 
-      <u-form-item label="营业执照" label-width="200" prop="uuid">
+      <u-form-item
+        label="营业执照"
+        label-width="200"
+        prop="uuid"
+        border
+        v-if="toUpdate"
+      >
         <u-upload
           v-show="!disabled"
           max-count="1"
@@ -100,12 +128,22 @@
         ></image>
       </u-form-item>
 
-      <u-form-item label="提交时间" label-width="200">
-        <u-input v-model="Application.time" disabled />
+      <u-form-item label="提交时间" label-width="200" v-if="toUpdate">
+        <u-input v-model="Application.time" disabled border />
       </u-form-item>
     </u-form>
 
-    <u-button type="warning " @click="modify" v-show="!disabled">修改</u-button>
+    <u-button
+      type="primary"
+      v-if="!toUpdate"
+      :disabled="audit_situation == '暂未审核'"
+      @click="
+        toUpdate = true;
+        disabled = false;
+      "
+      >前往修改</u-button
+    >
+    <u-button type="warning " @click="modify" v-if="toUpdate">修改</u-button>
   </view>
 </template>
 
@@ -144,12 +182,15 @@ export default class CompanyForm extends Vue {
       },
     ],
   };
-  disabled: boolean = false;
+  disabled: boolean = true;
+
+  toUpdate: boolean = false;
+  audit_situation: string = "";
+  audit_instructions: string = "";
 
   async modify() {
     let list = [];
     list = (this.$refs.uUpload as any).lists;
-    console.log(list);
     if (list.length == 0) {
       Toast.fail("未提交有效的营业执照！");
     } else {
@@ -228,12 +269,26 @@ export default class CompanyForm extends Vue {
     );
   }
 
+  //公司审核情况
+  async queryAudition(company_id: number) {
+    await api.BaseRequest.getRequestWithPath("/v1/audition/" + company_id).then(
+      (res: any) => {
+        if (res.data.data.length == 0) {
+          this.audit_situation = "暂未审核";
+        } else {
+          this.audit_situation = res.data.data[0].audit_situation;
+          this.audit_instructions = res.data.data[0].audit_instructions;
+        }
+      }
+    );
+  }
+
   onLoad(option: any) {
-    console.log(option);
     if (option.role == "企业") {
       this.disabled = true;
     }
     this.getCompanyInfo(option.company_id);
+    this.queryAudition(option.company_id);
   }
 }
 </script>

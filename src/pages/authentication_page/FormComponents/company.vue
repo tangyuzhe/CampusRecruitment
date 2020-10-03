@@ -11,15 +11,24 @@
       </u-form-item>
 
       <u-form-item label="公司地址" label-width="200">
-        <u-input v-model="address" placeholder="请选择公司地址" @click="bool = true" />
-        <u-picker mode="region" v-model="bool" :area-code="areaCode" @confirm="AddressConfirm"></u-picker>
+        <u-input
+          v-model="address"
+          placeholder="请选择公司地址"
+          @click="bool = true"
+        />
+        <u-picker
+          mode="region"
+          v-model="bool"
+          :area-code="areaCode"
+          @confirm="AddressConfirm"
+        ></u-picker>
       </u-form-item>
 
       <u-form-item label="企业性质" label-width="200">
         <u-input
           v-model="Application.nature"
           placeholder="请选择公司性质"
-          @click="natureActionSheet=true"
+          @click="natureActionSheet = true"
           type="select"
         />
         <u-action-sheet
@@ -33,7 +42,7 @@
         <u-input
           v-model="Application.scale"
           placeholder="请选择企业规模"
-          @click="scaleActionSheet=true"
+          @click="scaleActionSheet = true"
           type="select"
         />
         <u-action-sheet
@@ -50,16 +59,22 @@
           placeholder="请输入您的企业简介(不超过150字)"
           height="200"
           maxlength="150"
-          :border="1==1"
+          :border="1 == 1"
         />
       </u-form-item>
 
       <u-form-item label="企业官网" label-width="200">
-        <u-input v-model="Application.offical_website" placeholder="请填写您的企业官网" />
+        <u-input
+          v-model="Application.offical_website"
+          placeholder="请填写您的企业官网"
+        />
       </u-form-item>
 
       <u-form-item label="招聘网站" label-width="200">
-        <u-input v-model="Application.recruitment_website" placeholder="请填写您的企业招聘网站" />
+        <u-input
+          v-model="Application.recruitment_website"
+          placeholder="请填写您的企业招聘网站"
+        />
       </u-form-item>
 
       <u-form-item label="上传营业执照" label-width="200" prop="uuid">
@@ -116,7 +131,6 @@ export default class CompanyForm extends Vue {
   async submit() {
     let list = [];
     list = (this.$refs.uUpload as any).lists;
-    console.log(list);
     if (list.length == 0) {
       Toast.fail("未提交有效的营业执照！");
     } else {

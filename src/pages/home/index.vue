@@ -114,17 +114,15 @@ export default class Home extends Vue {
           "/pages/company_recruitment_page/index?company_id=" + this.company_id
         );
         break;
-      case "企业信息修改":
+      case "企业审核记录":
         this.RouterRedirect(
-          "/pages/companyDetail/index?company_id=" + this.company_id
+          "/pages/company/index?company_id=" + this.company_id
         );
         break;
-      case "我的企业信息":
-        let data = {
-          company_id: this.company_id,
-          role: this.roleValue,
-        };
-        this.RouterRedirect("/pages/companyDetail/index?" + qs.stringify(data));
+      case "管理员审核记录":
+        this.RouterRedirect(
+          "/pages/company/audition_admin/index?user_id=" + this.user_id
+        );
         break;
     }
   }

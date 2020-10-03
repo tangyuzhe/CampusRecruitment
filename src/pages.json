@@ -33,9 +33,15 @@
 			}
 		},
 		{
-			"path": "pages/companyDetail/index",
+			"path": "pages/company/index",
 			"style": {
-				"navigationBarTitleText": "我的企业"
+				"navigationBarTitleText": "企业审核记录"
+			}
+		},
+		{
+			"path": "pages/company/audition_admin/index",
+			"style": {
+				"navigationBarTitleText": "管理员审核记录"
 			}
 		},
 		{
