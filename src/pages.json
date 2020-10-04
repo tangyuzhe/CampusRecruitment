@@ -55,7 +55,14 @@
 			"style": {
 				"navigationBarTitleText": "教室申请记录"
 			}
+		},
+		{
+			"path": "pages/recruitment/index",
+			"style": {
+				"navigationBarTitleText": "招聘信息填写"
+			}
 		}
+
 	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",

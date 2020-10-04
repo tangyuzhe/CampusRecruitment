@@ -2,10 +2,10 @@
   <view class="main">
     <u-form :model="AdminAudition" ref="uForm">
       <u-form-item label="姓名" label-width="150">
-        <u-input border v-model="AdminAudition.name" disabled />
+        <u-input border v-model="AdminAudition.name" :disabled="disabled" />
       </u-form-item>
       <u-form-item label="工号" label-width="150">
-        <u-input border v-model="AdminAudition.work_id" disabled />
+        <u-input border v-model="AdminAudition.work_id" :disabled="disabled" />
       </u-form-item>
       <u-form-item label="审核时间" label-width="150">
         <u-input
@@ -33,7 +33,20 @@
         />
       </u-form-item>
     </u-form>
-    <u-button type="primary" class="margin-top">前往修改</u-button>
+
+    <u-modal
+      v-model="showTips"
+      :content="content"
+      show-cancel-button
+      @confirm="submit"
+    ></u-modal>
+
+    <u-button
+      :type="disabled ? 'primary' : 'warning'"
+      class="margin-top"
+      @click="updateAudition"
+      >{{ disabled ? "前往修改" : "修改" }}</u-button
+    >
   </view>
 </template>
 
@@ -47,6 +60,9 @@ import { Toast } from "vant";
 })
 export default class AdminAudition extends Vue {
   AdminAudition: any = {};
+  disabled: boolean = true;
+  showTips: boolean = false;
+  content: string = "是否确保信息已经完善，进行提交？";
 
   formatTime(time: string) {
     return moment(time).format("YYYY-MM-DD HH:MM:SS");
@@ -71,6 +87,28 @@ export default class AdminAudition extends Vue {
         }
       }
     );
+  }
+
+  //
+  async updateAudition() {
+    if (this.disabled) {
+      this.disabled = false;
+    } else {
+      this.showTips = true;
+    }
+  }
+
+  async submit() {
+    await api.BaseRequest.putRequest(
+      "/v1/adminAudition/" + this.AdminAudition.id,
+      this.AdminAudition
+    ).then((res: any) => {
+      console.log(res);
+      if (res.data.code == 0) {
+        Toast.success("修改成功！");
+        this.disabled = true;
+      }
+    });
   }
 
   onLoad(option: any) {

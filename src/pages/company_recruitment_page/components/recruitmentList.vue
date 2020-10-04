@@ -1,13 +1,31 @@
 <template>
   <view>
-    <u-button
-      class="add_btn"
-      type="primary"
-      size="medium"
-      @click="recruitmentForm = true"
-    >
-      <u-icon name="plus"></u-icon>添加招聘信息
-    </u-button>
+    <view>
+      <u-dropdown style="width: 100px; background: #ffffff; margin-left: 4%">
+        <u-dropdown-item
+          v-model="situation"
+          :title="situation"
+          :options="situationOptionList"
+          @change="selectSituation"
+        ></u-dropdown-item>
+      </u-dropdown>
+      <!-- <u-button
+        class="add_btn"
+        type="primary"
+        size="medium"
+        @click="recruitmentForm = true"
+      >
+        <u-icon name="plus"></u-icon>
+      </u-button> -->
+      <view class="add-plus bg-green">
+        <u-icon
+          name="plus"
+          size="50"
+          style="margin: 6px"
+          @click="addRecruitment"
+        ></u-icon>
+      </view>
+    </view>
 
     <view
       class="empty"
@@ -116,27 +134,54 @@ export default class RecruitmentList extends Vue {
     nomore: "没有更多了",
   };
   recruitmentForm: boolean = false;
+  situation: string = "全部";
+  situationOptionList: any = [
+    {
+      label: "全部",
+      value: "全部",
+    },
+    {
+      label: "通过",
+      value: "通过",
+    },
+    {
+      label: "不通过",
+      value: "不通过",
+    },
+    {
+      label: "等待审核",
+      value: "等待审核",
+    },
+  ];
 
   //获取招聘信息列表
   async getRecruitmentList(
     company_id: number,
     currentPage: number,
-    pageSize: number
+    pageSize: number,
+    audit_situation?: string
   ) {
-    await api.BaseRequest.getRequest("/v1/recruitment?", {
+    let query: any = {
       company_id: company_id,
       currentPage: currentPage,
       pageSize: pageSize,
-    }).then((res: any) => {
-      if (res.data.data.count == 0) {
-        this.isEmpty = true;
-      } else {
-        this.list = this.list.concat(res.data.data.rows);
-        if (this.list.length === res.data.data.count) {
-          this.status = "nomore";
+    };
+    if (audit_situation) {
+      query.audit_situation = audit_situation;
+    }
+    await api.BaseRequest.getRequest("/v1/recruitment?", query).then(
+      (res: any) => {
+        if (res.data.data.count == 0) {
+          this.isEmpty = true;
+        } else {
+          this.isEmpty = false;
+          this.list = this.list.concat(res.data.data.rows);
+          if (this.list.length === res.data.data.count) {
+            this.status = "nomore";
+          }
         }
       }
-    });
+    );
   }
 
   //获取可用窗口的高度
@@ -158,18 +203,31 @@ export default class RecruitmentList extends Vue {
     this.status = "loading";
     this.currentPage++;
     setTimeout(() => {
-      this.getRecruitmentList(this.companyID, this.currentPage, this.pageSize);
+      if (this.situation == "全部") {
+        this.getRecruitmentList(
+          this.companyID,
+          this.currentPage,
+          this.pageSize
+        );
+      } else {
+        this.getRecruitmentList(
+          this.companyID,
+          this.currentPage,
+          this.pageSize,
+          this.situation
+        );
+      }
     }, 2000);
   }
 
   //关闭招聘记录表单
-  getDataOfRecruitmentForm(val: boolean) {
-    this.recruitmentForm = val;
-    this.currentPage = 1;
-    this.list = [];
-    this.status = "loadmore";
-    this.getRecruitmentList(this.companyID, this.currentPage, this.pageSize);
-  }
+  // getDataOfRecruitmentForm(val: boolean) {
+  //   this.recruitmentForm = val;
+  //   this.currentPage = 1;
+  //   this.list = [];
+  //   this.status = "loadmore";
+  //   this.getRecruitmentList(this.companyID, this.currentPage, this.pageSize);
+  // }
 
   //查看岗位页面跳转
   WatchStation(item: any) {
@@ -192,6 +250,30 @@ export default class RecruitmentList extends Vue {
   created() {
     this.getRecruitmentList(this.companyID, this.currentPage, this.pageSize);
     this.getWindowInfo();
+  }
+
+  //菜单选择
+  selectSituation(e: any) {
+    console.log(e);
+    this.currentPage = 1;
+    this.list = [];
+    this.status = "loadmore";
+    if (e == "全部") {
+      this.getRecruitmentList(this.companyID, this.currentPage, this.pageSize);
+    } else {
+      this.getRecruitmentList(
+        this.companyID,
+        this.currentPage,
+        this.pageSize,
+        e
+      );
+    }
+  }
+
+  addRecruitment() {
+    uni.navigateTo({
+      url: "/pages/recruitment/index?company_id=" + this.companyID,
+    });
   }
 }
 </script>
@@ -247,8 +329,12 @@ body {
   top: -45px;
 }
 
-.add_btn {
-  margin: 0 5%;
-  width: 90%;
+.add-plus {
+  width: 40px;
+  height: 40px;
+  float: right;
+  margin-top: -40px;
+  margin-right: 4%;
+  border-radius: 50%;
 }
 </style>

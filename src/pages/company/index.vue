@@ -115,23 +115,29 @@
         border
         v-if="toUpdate"
       >
+        <image
+          :src="'http://127.0.0.1:7001/public/upload/' + Application.uuid"
+          style="width: 100%; height: 200rpx"
+        ></image>
         <u-upload
           v-show="!disabled"
           max-count="1"
           ref="uUpload"
           :action="action"
         ></u-upload>
-        <image
-          v-show="disabled"
-          :src="'http://127.0.0.1:7001/public/upload/' + Application.uuid"
-          style="width: 100%; height: 200rpx"
-        ></image>
       </u-form-item>
 
       <u-form-item label="提交时间" label-width="200" v-if="toUpdate">
         <u-input v-model="Application.time" disabled border />
       </u-form-item>
     </u-form>
+
+    <u-modal
+      v-model="showTips"
+      :content="content"
+      show-cancel-button
+      @confirm="submit"
+    ></u-modal>
 
     <u-button
       type="primary"
@@ -187,32 +193,36 @@ export default class CompanyForm extends Vue {
   toUpdate: boolean = false;
   audit_situation: string = "";
   audit_instructions: string = "";
+  showTips: boolean = false;
+  content: string = "是否确保信息已经完善，进行提交？";
 
   async modify() {
     let list = [];
     list = (this.$refs.uUpload as any).lists;
-    if (list.length == 0) {
-      Toast.fail("未提交有效的营业执照！");
-    } else {
+    if (list.length != 0) {
       this.Application.uuid = list[0].response.files.fileName;
-      Toast.loading({
-        message: "正在提交中，请等候...",
-        forbidClick: true,
-      });
-      api.BaseRequest.putRequest(
-        "/v1/company/" + this.Application.id,
-        this.Application
-      ).then((res: any) => {
-        if (res.data.code == 0) {
-          Toast.success("提交成功！");
-          uni.navigateBack({
-            delta: -1,
-          });
-        } else {
-          Toast.fail("提交失败！");
-        }
-      });
     }
+    this.showTips = true;
+  }
+
+  async submit() {
+    Toast.loading({
+      message: "正在提交中，请等候...",
+      forbidClick: true,
+    });
+    api.BaseRequest.putRequest(
+      "/v1/company/" + this.Application.id,
+      this.Application
+    ).then((res: any) => {
+      if (res.data.code == 0) {
+        Toast.success("提交成功！");
+        uni.navigateTo({
+          url: "/pages/home/index",
+        });
+      } else {
+        Toast.fail("提交失败！");
+      }
+    });
   }
 
   //选择企业地址
