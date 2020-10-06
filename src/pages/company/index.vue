@@ -297,6 +297,10 @@ export default class CompanyForm extends Vue {
     if (option.role == "企业") {
       this.disabled = true;
     }
+    if (option.hasAudition == "false") {
+      this.toUpdate = true;
+      this.disabled = false;
+    }
     this.getCompanyInfo(option.company_id);
     this.queryAudition(option.company_id);
   }

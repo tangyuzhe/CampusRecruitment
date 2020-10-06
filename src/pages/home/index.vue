@@ -124,6 +124,13 @@ export default class Home extends Vue {
           "/pages/company/audition_admin/index?user_id=" + this.user_id
         );
         break;
+      case "企业信息":
+        let query = {
+          company_id: this.company_id,
+          hasAudition: "false",
+        };
+        this.RouterRedirect("/pages/company/index?" + qs.stringify(query));
+        break;
     }
   }
 

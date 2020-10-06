@@ -3,8 +3,12 @@
     <u-card v-for="(item, index) in list" :key="index">
       <view slot="head">
         <p>{{ "岗位信息" + (index + 1) }}</p>
-        <u-button type="success" size="mini" class="add" @click="list.push({})"
-          >继续添加</u-button
+        <u-button
+          type="error"
+          size="mini"
+          class="add"
+          @click="list.length > 1 ? list.splice(index, 1) : list"
+          >删除</u-button
         >
       </view>
       <view slot="body">
@@ -27,7 +31,35 @@
         </u-form>
       </view>
     </u-card>
-    <u-button type="primary" @click="test">继续添加</u-button>
+
+    <view class="demo-layout">
+      <image src="../../../static/add_plus.png" mode="" @click="addForm" />
+    </view>
+
+    <u-row gutter="16">
+      <u-col span="6">
+        <view class="demo-layout">
+          <u-button
+            type="success"
+            class="margin-top"
+            shape="circle"
+            @click="sendCurrent(-1)"
+            >上一步</u-button
+          >
+        </view>
+      </u-col>
+      <u-col span="6">
+        <view class="demo-layout bg-purple-light"
+          ><u-button
+            type="success"
+            class="margin-top"
+            @click="next"
+            shape="circle"
+            >下一步</u-button
+          ></view
+        >
+      </u-col>
+    </u-row>
   </view>
 </template>
 
@@ -40,28 +72,51 @@ import moment from "moment";
   components: {},
 })
 export default class StationForm extends Vue {
-  addImage: string = "../../static/add_plus.png";
-  Station: any = {
-    recruitment_id: 0,
-    station: "",
-    salary: "",
-    workplace: "",
-    recruit_number: 0,
-  };
-  @Prop({}) recruitment_id!: number;
+  @Prop({}) current!: number;
+  @Emit("getCurrent") sendCurrent(current: number) {}
   list: any = [];
 
-  init() {
-    this.Station.recruitment_id = this.recruitment_id;
-    this.list.push({});
+  addForm() {
+    let station: object = {
+      recruitment_id: 0,
+      station: "",
+      salary: "",
+      workplace: "",
+      recruit_number: 0,
+    };
+    this.list.push(station);
+  }
+
+  // @Watch("current")
+  // WatchCurrent(newVal: number) {
+  //   if (newVal == 0 && this.list.length == 0) {
+  //     this.addForm();
+  //   }
+  // }
+
+  mounted() {
+    this.addForm();
   }
 
   created() {
-    this.init();
+    // this.addForm();
+    uni.getStorage({
+      key: "Station",
+      success: (res: any) => {
+        this.list = res.data;
+      },
+      fail: (res: any) => {
+        this.list = [];
+      },
+    });
   }
 
-  test() {
-    console.log(this.list);
+  next() {
+    uni.setStorage({
+      key: "Station",
+      data: this.list,
+    });
+    this.sendCurrent(1);
   }
 }
 </script>
@@ -89,5 +144,10 @@ export default class StationForm extends Vue {
   font-size: 20rpx;
   color: #333;
   padding: 20rpx 10rpx;
+}
+
+image {
+  width: 30px;
+  height: 30px;
 }
 </style>

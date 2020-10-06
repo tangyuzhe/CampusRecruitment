@@ -11,7 +11,12 @@
       </u-form-item>
 
       <u-form-item label="上传文件" label-width="150">
-        <u-upload max-count="1" ref="uUpload" :action="action"></u-upload>
+        <u-upload
+          max-count="1"
+          ref="uUpload"
+          :action="action"
+          :file-list="fileList"
+        ></u-upload>
       </u-form-item>
 
       <u-form-item label="开始时间" label-width="150">
@@ -44,6 +49,27 @@
         ></u-picker>
       </u-form-item>
     </u-form>
+
+    <u-row gutter="16">
+      <u-col span="6">
+        <view class="demo-layout">
+          <u-button type="success" class="margin-top" disabled shape="circle"
+            >上一步</u-button
+          >
+        </view>
+      </u-col>
+      <u-col span="6">
+        <view class="demo-layout bg-purple-light"
+          ><u-button
+            type="success"
+            class="margin-top"
+            @click="next"
+            shape="circle"
+            >下一步</u-button
+          ></view
+        >
+      </u-col>
+    </u-row>
   </view>
 </template>
 
@@ -63,8 +89,8 @@ export default class RecruitmentForm extends Vue {
     time: new Date(),
   };
   @Prop({}) company_id!: number;
-  @Prop({}) current!: number;
   @Emit("getRecruitmentID") getRecruitmentID(id: number) {}
+  @Emit("getCurrent") sendCurrent(current: number) {}
   action: string = "http://127.0.0.1:7001/api/v1/upload";
   start_time: boolean = false;
   finished_time: boolean = false;
@@ -76,6 +102,7 @@ export default class RecruitmentForm extends Vue {
     minute: true,
     second: false,
   };
+  fileList: any = [];
 
   selectStartTime(val: any) {
     let date = val.year + "-" + val.month + "-" + val.day;
@@ -92,34 +119,30 @@ export default class RecruitmentForm extends Vue {
   //数据初始化
   init() {
     this.recruitment.company_id = this.company_id;
+    uni.getStorage({
+      key: "Recruitment",
+      success: (res: any) => {
+        this.recruitment = JSON.parse(res.data);
+        this.fileList[0] =
+          "http://127.0.0.1:7001/public/upload/" + this.recruitment.enclosure;
+      },
+    });
   }
 
-  //提交表单
-  async submit() {
+  next() {
+    this.saveData();
+  }
+
+  //数据缓存
+  saveData() {
     let list = [];
     list = (this.$refs.uUpload as any).lists;
-    if (list.length == 0) {
-      Toast.fail("未提交有效的文件！");
-    } else {
-      this.recruitment.enclosure = list[0].response.files.fileName;
-      await api.BaseRequest.postRequest(
-        "/v1/recruitment",
-        this.recruitment
-      ).then((res: any) => {
-        console.log(res);
-        if (res.data.code == 0) {
-          Toast.success("提交成功！");
-          this.getRecruitmentID(res.data.data.id);
-        }
-      });
-    }
-  }
-
-  @Watch("current")
-  WatchCurrent(newVal: number) {
-    if (newVal == 0) {
-      this.submit();
-    }
+    this.recruitment.enclosure = list[0].response.files.fileName;
+    uni.setStorage({
+      key: "Recruitment",
+      data: JSON.stringify(this.recruitment),
+    });
+    this.sendCurrent(0);
   }
 
   created() {
