@@ -195,6 +195,7 @@ export default class CompanyForm extends Vue {
   audit_instructions: string = "";
   showTips: boolean = false;
   content: string = "是否确保信息已经完善，进行提交？";
+  companyid: number = 0;
 
   async modify() {
     let list = [];
@@ -219,6 +220,7 @@ export default class CompanyForm extends Vue {
         uni.navigateTo({
           url: "/pages/home/index",
         });
+        this.updateAudition(this.companyid);
       } else {
         Toast.fail("提交失败！");
       }
@@ -293,10 +295,22 @@ export default class CompanyForm extends Vue {
     );
   }
 
+  async updateAudition(company_id: number) {
+    await api.BaseRequest.getRequestWithPath("/v1/audition/" + company_id).then(
+      (res: any) => {
+        let data = res.data.data[0];
+        data.audit_situation = "等待审核";
+        data.audit_instructions = "";
+        api.BaseRequest.putRequest("/v1/audition/" + company_id, data);
+      }
+    );
+  }
+
   onLoad(option: any) {
     if (option.role == "企业") {
       this.disabled = true;
     }
+    this.companyid = option.company_id;
     if (option.hasAudition == "false") {
       this.toUpdate = true;
       this.disabled = false;
