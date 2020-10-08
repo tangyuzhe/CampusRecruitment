@@ -1,11 +1,11 @@
 <template>
   <view>
     <view class="middle">
-      <view style="float: right">
+      <!-- <view style="float: right">
         <u-button type="primary" size="mini" @click="openForm">
           <u-icon name="plus"></u-icon> 添加岗位</u-button
         >
-      </view>
+      </view> -->
       <u-empty text="未查询到数据" mode="data" v-if="isEmpty"></u-empty>
     </view>
 

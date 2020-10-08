@@ -12,6 +12,7 @@ export const grideList = [
   { icon: "lock", name: "企业招聘信息", permission: ["企业"] },
   { icon: "lock", name: "企业信息", permission: ["企业"] },
   { icon: "hourglass", name: "管理员审核", permission: ["管理员"] },
+  { icon: "hourglass", name: "招聘审核", permission: ["管理员"] },
 ]
 
 

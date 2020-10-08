@@ -61,6 +61,18 @@
 			"style": {
 				"navigationBarTitleText": "招聘信息填写"
 			}
+		},
+		{
+			"path": "pages/RecruitmentAudition/index",
+			"style": {
+				"navigationBarTitleText": "招聘信息审核"
+			}
+		},
+		{
+			"path": "pages/RecruitmentAudition/recruitmentDetail/index",
+			"style": {
+				"navigationBarTitleText": "招聘信息详情"
+			}
 		}
 
 	],

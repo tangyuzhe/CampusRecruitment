@@ -90,7 +90,7 @@ export default class RecruitmentForm extends Vue {
     this.Recruitment.time = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
     let list = [];
     list = (this.$refs.uUpload as any).lists;
-    console.log(list);
+    // console.log(list);
     if (list.length == 0) {
       Toast.fail("未提交有效的文件！");
     } else {
@@ -106,7 +106,7 @@ export default class RecruitmentForm extends Vue {
   async post() {
     await api.BaseRequest.postRequest("/v1/recruitment", this.Recruitment).then(
       (res: any) => {
-        console.log(res);
+        // console.log(res);
         if (res.data.code == 0) {
           Toast.success("提交成功！");
         }

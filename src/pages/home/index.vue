@@ -68,7 +68,7 @@ export default class Home extends Vue {
     await api.BaseRequest.getRequest("/v1/user?", {
       openid: "oeJ85uJDWaMNq33UN9V7vFfuJ0P0",
     }).then((res: any) => {
-      console.log(res);
+      // console.log(res);
       if (res.data.code == 0) {
         this.roleValue = res.data.data.role;
         this.user_id = res.data.data.id;
@@ -130,6 +130,10 @@ export default class Home extends Vue {
           hasAudition: "false",
         };
         this.RouterRedirect("/pages/company/index?" + qs.stringify(query));
+        break;
+      case "招聘审核":
+        this.RouterRedirect(
+          "/pages/RecruitmentAudition/index");
         break;
     }
   }

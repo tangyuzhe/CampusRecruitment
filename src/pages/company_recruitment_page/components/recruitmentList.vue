@@ -254,7 +254,7 @@ export default class RecruitmentList extends Vue {
 
   //菜单选择
   selectSituation(e: any) {
-    console.log(e);
+    // console.log(e);
     this.currentPage = 1;
     this.list = [];
     this.status = "loadmore";

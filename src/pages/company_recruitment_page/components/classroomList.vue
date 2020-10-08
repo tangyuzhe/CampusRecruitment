@@ -1,11 +1,11 @@
 <template>
   <view>
     <view class="middle">
-      <view style="float: right">
+      <!-- <view style="float: right">
         <u-button type="primary" size="mini" @click="openClassroomForm">
           <u-icon name="plus"></u-icon> 教室申请</u-button
         >
-      </view>
+      </view> -->
       <u-empty text="未查询到数据" mode="data" v-show="isEmpty"></u-empty>
     </view>
 

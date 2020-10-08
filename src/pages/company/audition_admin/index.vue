@@ -103,7 +103,7 @@ export default class AdminAudition extends Vue {
       "/v1/adminAudition/" + this.AdminAudition.id,
       this.AdminAudition
     ).then((res: any) => {
-      console.log(res);
+      // console.log(res);
       if (res.data.code == 0) {
         Toast.success("修改成功！");
         this.disabled = true;

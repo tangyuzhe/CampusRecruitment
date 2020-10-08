@@ -46,9 +46,9 @@ export default class AuditRecordsPage extends Vue {
     {
       name: "管理员申请记录",
     },
-    {
-      name: "教室安排",
-    },
+    // {
+    //   name: "教室安排",
+    // },
   ];
   currentTab: number = 0;
 
