@@ -21,6 +21,7 @@
             type="primary"
             size="mini"
             @click="showDetail(item)"
+            :disabled="item.audit_situation == '通过'"
             >审核</u-button
           >
         </u-td>
@@ -39,7 +40,7 @@
 import { Component, Vue } from "vue-property-decorator";
 import * as api from "../../api/request";
 import { Pagination, Toast } from "vant";
-import qs from 'qs';
+import qs from "qs";
 @Component({
   components: {
     Pagination,
@@ -75,13 +76,13 @@ export default class AdminApplication extends Vue {
   }
 
   //查看招聘详情
-  showDetail(item:any){
+  showDetail(item: any) {
     uni.setStorage({
-      key:'recruitmentData',
-      data:item
-    })
+      key: "recruitmentData",
+      data: item,
+    });
     uni.navigateTo({
-      url: '/pages/RecruitmentAudition/recruitmentDetail/index',
+      url: "/pages/RecruitmentAudition/recruitmentDetail/index",
     });
   }
 

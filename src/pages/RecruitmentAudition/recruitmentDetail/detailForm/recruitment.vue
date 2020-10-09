@@ -1,6 +1,6 @@
 <template>
   <view class="margin-top">
-    <van-form >
+    <van-form>
       <van-field
         :value="recruitment.recruitment_info"
         type="textarea"
@@ -30,13 +30,9 @@
         readonly
       />
 
-      <van-field
-        name="附件"
-        label="附件"
-        readonly
-      >
+      <van-field name="附件" label="附件" readonly>
         <template #input>
-          <image :src="url+recruitment.enclosure" />
+          <image :src="url + recruitment.enclosure" />
         </template>
       </van-field>
 
@@ -66,7 +62,7 @@
         :label="recruitment.audit_time?'审核时间':'当前时间'"
       /> -->
 
-      <div style="margin: 16px;">
+      <div style="margin: 16px">
         <van-button round block type="info" @click="submit">
           下一步
         </van-button>
@@ -78,64 +74,64 @@
 <script lang="ts">
 import { Component, Vue, Prop, Emit } from "vue-property-decorator";
 import * as api from "../../../../api/request";
-import { Toast,Form,RadioGroup, Radio } from "vant";
-import { Image as VanImage } from 'vant';
+import { Toast, Form, RadioGroup, Radio } from "vant";
+import { Image as VanImage } from "vant";
 import moment from "moment";
 @Component({
-  components: {
-
-  },
+  components: {},
 })
 export default class RecruitmentDetailPage extends Vue {
-  recruitment:any = {}
-  url:string = 'http://127.0.0.1:7001/public/upload/';
+  recruitment: any = {};
+  url: string = "http://127.0.0.1:7001/public/upload/";
   @Emit("getCurrent") sendCurrent(current: number) {}
 
-  formatTime(time:string){
-    return moment(time).format('YYYY年MM月DD日 HH:mm:ss');
+  formatTime(time: string) {
+    return moment(time).format("YYYY年MM月DD日 HH:mm:ss");
   }
 
-  getRecruitmentData(){
+  getRecruitmentData() {
     uni.getStorage({
-      key:'recruitmentData',
-      success:(res:any)=>{
+      key: "recruitmentData",
+      success: (res: any) => {
         this.recruitment = res.data;
-        if(this.recruitment.audit_time){
-          this.recruitment.audit_time = this.formatTime(this.recruitment.audit_time)
-        }else{
-          this.recruitment.audit_time = moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
+        if (this.recruitment.audit_time) {
+          this.recruitment.audit_time = this.formatTime(
+            this.recruitment.audit_time
+          );
+        } else {
+          this.recruitment.audit_time = moment(new Date()).format(
+            "YYYY-MM-DD HH:mm:ss"
+          );
         }
       },
-      fail:()=>{
-        Toast.fail('查询失败')
-      }
-    })
+      fail: () => {
+        Toast.fail("查询失败");
+      },
+    });
   }
 
-  async submit(){
-    let data = {
-      audit_situation:this.recruitment.audit_situation,
-      audit_info:this.recruitment.audit_info,
-      audit_time:this.recruitment.audit_time
-    }
-    await api.BaseRequest.putRequestWithParams('/v1/recruitment/'+this.recruitment.id+'?',data).then((res:any)=>{
-      if(res.data.code==0){
-        this.sendCurrent(0)
-      }
-    })
-    
+  async submit() {
+    // let data = {
+    //   audit_situation:this.recruitment.audit_situation,
+    //   audit_info:this.recruitment.audit_info,
+    //   audit_time:this.recruitment.audit_time
+    // }
+    // await api.BaseRequest.putRequestWithParams('/v1/recruitment/'+this.recruitment.id+'?',data).then((res:any)=>{
+    //   if(res.data.code==0){
+    this.sendCurrent(0);
+    //   }
+    // })
   }
 
-  mounted(){
-    this.getRecruitmentData()
-
+  mounted() {
+    this.getRecruitmentData();
   }
 }
 </script>
 
 <style scoped lang="scss">
-image{
-  width:80px;
-  height:80px;
+image {
+  width: 80px;
+  height: 80px;
 }
 </style>

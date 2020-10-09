@@ -17,13 +17,13 @@
         <u-td class="u-td" width="25%">{{ item.name }}</u-td>
         <u-td class="u-td" width="40%">{{ item.work_id }}</u-td>
         <u-td class="u-td" width="20%">
-          <u-button
+          <!-- <u-button
             type="primary"
             size="mini"
             @click="pass(item)"
             :disabled="item.role == '管理员'"
             >通过</u-button
-          >
+          > -->
         </u-td>
       </u-tr>
     </u-table>
@@ -46,26 +46,25 @@ import { Pagination, Toast } from "vant";
   },
 })
 export default class AdminApplication extends Vue {
-  currentPage: number = 1;
   pageCount: number = 1;
   list: any = [];
   params: any = {
-    currentPage: 1,
     pageSize: 10,
+    currentPage: 1,
   };
 
   //获取申请列表
   async GetApplicationList() {
-    await api.BaseRequest.getRequest("/v1/user/admin?", this.params).then(
-      (res: any) => {
-        if (res.data.code == 0) {
-          this.pageCount = Math.ceil(
-            res.data.data.count / this.params.pageSize
-          );
-          this.list = res.data.data.rows;
-        }
+    await api.BaseRequest.getRequest(
+      "/v1/adminAuditionList?",
+      this.params
+    ).then((res: any) => {
+      console.log(res);
+      if (res.data.code == 0) {
+        this.pageCount = Math.ceil(res.data.data.count / this.params.pageSize);
+        this.list = res.data.data.rows;
       }
-    );
+    });
   }
 
   //当前页改变
@@ -74,22 +73,7 @@ export default class AdminApplication extends Vue {
     this.GetApplicationList();
   }
 
-  //申请通过
-  async pass(item: any) {
-    let query = {
-      id: item.id,
-      role: "管理员",
-    };
-    await api.BaseRequest.putRequestWithParams("/v1/user?", query).then(
-      (res: any) => {
-        if (res.data.code == 0) {
-          Toast.success("认证完成！");
-        }
-      }
-    );
-  }
-
-  created() {
+  mounted() {
     this.GetApplicationList();
   }
 }
