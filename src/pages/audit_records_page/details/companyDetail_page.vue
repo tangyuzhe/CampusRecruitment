@@ -138,7 +138,6 @@ export default class CompanyDetailPage extends Vue {
   disable: boolean = false;
   that = this as any;
   isPass: number = -1;
-
   //时间格式化
   formatTime(time: string | Object) {
     return moment(time).format("YYYY年MM月DD日 HH:mm:ss");
@@ -149,6 +148,7 @@ export default class CompanyDetailPage extends Vue {
     await api.BaseRequest.getRequest("/v1/searchCompany?", {
       id: this.company_id,
     }).then((res: any) => {
+      console.log(res);
       if (res.data.code == 0) {
         this.company = res.data.data[0];
         this.imgSrc += this.company.uuid;
@@ -224,6 +224,9 @@ export default class CompanyDetailPage extends Vue {
       (res: any) => {
         if (res.data.code == 0) {
           Toast.success("完成此次审核！");
+          if (this.audition.audit_situation == "通过") {
+            this.updateRole(this.company.user_id);
+          }
           this.auditForm = false;
         }
       }
@@ -260,6 +263,14 @@ export default class CompanyDetailPage extends Vue {
   onLoad(option: any) {
     this.company_id = option.company_id;
     this.GetCompanyDetail();
+  }
+
+  //更新角色
+  async updateRole(id: number) {
+    await api.BaseRequest.putRequestWithParams("/v1/user?", {
+      id: id,
+      role: "企业",
+    });
   }
 }
 </script>

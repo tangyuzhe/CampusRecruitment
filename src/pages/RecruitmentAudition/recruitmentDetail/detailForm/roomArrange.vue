@@ -149,7 +149,7 @@ export default class RoomArrangePage extends Vue {
   }
 
   init() {
-    this.list.forEach((item) => {
+    this.list.forEach((item: any) => {
       item.audit_situation = "通过";
     });
     this.total = this.total.concat(this.list);
@@ -158,7 +158,21 @@ export default class RoomArrangePage extends Vue {
   async submit() {
     let data = {};
     this.total = new Set(this.total);
-    this.total.forEach((item) => {
+    this.total.forEach((item: any) => {
+      let params = {
+        id: item.id,
+        classroom: item.classroom,
+        audit_instructions: item.audit_instructions,
+        audit_situation: item.audit_situation,
+      };
+      api.BaseRequest.putRequestWithParams(
+        "/v1/arrangeClassroom?",
+        params
+      ).then((res: any) => {
+        if (res.data.code == 0) {
+          Toast.success("教室安排成功");
+        }
+      });
       if (item.classroom == "" || item.audit_situation == "不通过") {
         uni.setStorage({
           key: "audition",
@@ -172,21 +186,6 @@ export default class RoomArrangePage extends Vue {
       }
     });
     this.sendCurrent(2);
-    // let params = {
-    //   id: item.id,
-    //   classroom: item.classroom,
-    //   audit_instructions: item.audit_instructions,
-    //   audit_situation: item.audit_situation,
-    // };
-    // await api.BaseRequest.putRequestWithParams(
-    //   "/v1/arrangeClassroom?",
-    //   params
-    // ).then((res: any) => {
-    //   console.log(res);
-    //   if (res.data.code == 0) {
-    //     Toast.success("教室安排成功");
-    //   }
-    // });
   }
 
   mounted() {

@@ -73,6 +73,12 @@
 			"style": {
 				"navigationBarTitleText": "招聘信息详情"
 			}
+		},
+		{
+			"path": "pages/audit_records_page/details/adminDetail",
+			"style": {
+				"navigationBarTitleText": "管理员申请详情"
+			}
 		}
 
 	],

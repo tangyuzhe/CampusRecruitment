@@ -132,8 +132,7 @@ export default class Home extends Vue {
         this.RouterRedirect("/pages/company/index?" + qs.stringify(query));
         break;
       case "招聘审核":
-        this.RouterRedirect(
-          "/pages/RecruitmentAudition/index");
+        this.RouterRedirect("/pages/RecruitmentAudition/index");
         break;
     }
   }
