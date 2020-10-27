@@ -86,12 +86,12 @@
       </u-form-item>
     </u-form>
 
-    <u-button type="primary" @click="submit">提交</u-button>
+    <u-button type="primary" @click="getCompanyInfo">提交</u-button>
   </view>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-property-decorator";
 import moment from "moment";
 import * as api from "../../../api/request";
 import { Toast } from "vant";
@@ -100,6 +100,7 @@ import { CompanyScaleList, CompanyNatureList } from "../../../util/dataList";
   components: {},
 })
 export default class CompanyForm extends Vue {
+  @Prop(String) company_id!: string;
   bool: boolean = false;
   natureActionSheet: boolean = false;
   scaleActionSheet: boolean = false;
@@ -128,7 +129,27 @@ export default class CompanyForm extends Vue {
     ],
   };
 
+  //获取公司信息
+  async getCompanyInfo() {
+    const id = Number(this.company_id)
+    await api.BaseRequest.getRequest("/v1/searchCompany?", { id: id }).then(
+      (res: any) => {
+        if (res.data.data.length != 0) {
+          Toast.fail("您已提交审核，请勿重复提交！");
+        } else {
+          this.submit()
+          setTimeout(() => {
+            uni.navigateTo({
+              url: "/pages/home/index",
+            });
+          }, 2000);
+        }
+      }
+    );
+  }
+
   async submit() {
+    // console.log(this.user_id);
     let list = [];
     list = (this.$refs.uUpload as any).lists;
     if (list.length == 0) {
@@ -145,6 +166,7 @@ export default class CompanyForm extends Vue {
       ).then((res: any) => {
         if (res.data.code == 0) {
           Toast.success("提交成功！");
+          console.log(res);
           uni.navigateBack({
             delta: -1,
           });

@@ -307,6 +307,7 @@ export default class CompanyForm extends Vue {
   }
 
   onLoad(option: any) {
+    console.log(option);
     if (option.role == "企业") {
       this.disabled = true;
     }

@@ -104,7 +104,7 @@ export default class Home extends Vue {
   PageJump(item: any) {
     switch (item.name) {
       case "认证申请":
-        this.RouterRedirect("/pages/authentication_page/index");
+        this.RouterRedirect("/pages/authentication_page/index?user_id=" + this.user_id + "&company_id=" + this.company_id);
         break;
       case "管理员审核":
         this.RouterRedirect("/pages/audit_records_page/index");

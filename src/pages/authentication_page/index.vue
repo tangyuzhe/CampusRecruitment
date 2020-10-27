@@ -13,10 +13,10 @@
       ></u-tabs-swiper>
     </view>
     <view class="wrap margin-top" v-if="currentTab===0">
-      <company-form></company-form>
+      <company-form :company_id="company_id"></company-form>
     </view>
     <view class="wrap margin-top" v-if="currentTab===1">
-      <admin-form></admin-form>
+      <admin-form :user_id ='user_id'></admin-form>
     </view>
   </view>
 </template>
@@ -32,6 +32,8 @@ import AdminForm from "./FormComponents/admin.vue";
   },
 })
 export default class AuthenticationPage extends Vue {
+  user_id: string = "" ;
+  company_id: string = "" ;
   list: object[] = [
     {
       name: "企业认证",
@@ -44,6 +46,12 @@ export default class AuthenticationPage extends Vue {
 
   tabsChange(index: number) {
     this.currentTab = index;
+  }
+
+  onLoad(option: any) {
+    console.log(option);
+    this.user_id = option.user_id;
+    this.company_id = option.company_id;
   }
 }
 </script>
