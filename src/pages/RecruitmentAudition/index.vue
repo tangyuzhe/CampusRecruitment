@@ -3,8 +3,8 @@
     <u-table font-size="28" align="left">
       <u-tr class="u-tr" style="height: 40px">
         <u-th class="u-th" width="15%">序号</u-th>
-        <u-th class="u-th" width="50%">招聘信息</u-th>
-        <u-th class="u-th" width="15%">是否通过</u-th>
+        <u-th class="u-th" width="45%">招聘信息</u-th>
+        <u-th class="u-th" width="20%" style="text-align:center">审核进度</u-th>
         <u-th class="u-th" width="20%">查看详情</u-th>
       </u-tr>
       <u-tr
@@ -14,8 +14,8 @@
         style="height: 50px"
       >
         <u-td class="u-td" width="15%">{{ index + 1 }}</u-td>
-        <u-td class="u-td" width="50%">{{ item.recruitment_info }}</u-td>
-        <u-td class="u-td" width="15%">{{ item.audit_situation }}</u-td>
+        <u-td class="u-td" width="45%">{{ item.recruitment_info }}</u-td>
+        <u-td class="u-td" width="20%" style="text-align:center">{{ item.audit_situation }}</u-td>
         <u-td class="u-td" width="20%">
           <u-button
             type="primary"

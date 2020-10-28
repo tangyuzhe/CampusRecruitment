@@ -15,7 +15,7 @@
       </u-form-item>
 
       <u-form-item label="招聘人数" label-width="200">
-        <u-number-box v-model="Station.recruit_number"></u-number-box>
+        <u-number-box v-model="Station.recruit_number" :min='1'></u-number-box>
       </u-form-item>
     </u-form>
     <u-button :type="option == 1 ? 'warning' : 'primary'" @click="submit">{{

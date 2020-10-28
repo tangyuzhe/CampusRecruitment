@@ -106,7 +106,13 @@
             />
           </u-form-item>
         </u-form>
-
+        <u-alert-tips
+          type="warning"
+          :show-icon="true"
+          :description="description"
+          v-show="alertTip"
+          style="margin-bottom:10px"
+        ></u-alert-tips>
         <u-button type="primary" @click="submit" :disabled="disable"
           >提交</u-button
         >
@@ -118,10 +124,11 @@
 </template>
 
 <script lang="ts">
-import { Toast, RadioGroup, Radio } from "vant";
+import { Toast, RadioGroup, Radio, Dialog } from "vant";
 import { Component, Vue } from "vue-property-decorator";
 import * as api from "../../../api/request";
 import moment from "moment";
+import toast from "uview-ui/libs/function/toast";
 @Component({
   components: { RadioGroup, Radio },
 })
@@ -132,17 +139,17 @@ export default class CompanyDetailPage extends Vue {
   imgSrc: string = "http://127.0.0.1:7001/public/upload/";
   auditForm: boolean = false;
   radio: string = "1";
-
+  alertTip: boolean = false;
   audition: any = {};
   examiner: string = "";
   disable: boolean = false;
   that = this as any;
   isPass: number = -1;
+  description: string = "请填写审核记录！";
   //时间格式化
   formatTime(time: string | Object) {
     return moment(time).format("YYYY年MM月DD日 HH:mm:ss");
   }
-
   //查询公司详情
   async GetCompanyDetail() {
     await api.BaseRequest.getRequest("/v1/searchCompany?", {
@@ -248,10 +255,20 @@ export default class CompanyDetailPage extends Vue {
 
   //审核提交
   async submit() {
-    if (this.isPass == 0) {
-      this.firstSubmit();
-    } else if (this.isPass == 1) {
-      this.update();
+    // console.log(typeof this.audition.audit_instructions === 'undefined' || this.audition.audit_instructions === '')
+    const flag =
+      typeof this.audition.audit_instructions === "undefined" ||
+      this.audition.audit_instructions === "";
+    if (flag) {
+      // Notify("请输入审核记录");
+      this.alertTip = true;
+    } else {
+      this.alertTip = false;
+      if (this.isPass == 0) {
+        this.firstSubmit();
+      } else if (this.isPass == 1) {
+        this.update();
+      }
     }
   }
 
