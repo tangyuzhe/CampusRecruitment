@@ -70,6 +70,7 @@ export default class AdminAudition extends Vue {
 
   //查询申请记录
   async queryAudition(user_id: number) {
+    console.log(user_id);
     let query = {
       user_id: user_id,
     };
@@ -112,6 +113,7 @@ export default class AdminAudition extends Vue {
   }
 
   onLoad(option: any) {
+    console.log(option);
     this.queryAudition(option.user_id);
   }
 }

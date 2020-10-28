@@ -12,19 +12,20 @@
       </u-form-item>
     </u-form>
 
-    <u-button type="primary" @click="submit">提交审核</u-button>
+    <u-button type="primary" @click="queryAudition">提交审核</u-button>
   </view>
 </template>
 
 <script lang="ts">
 import { Toast } from "vant";
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-property-decorator";
 import * as api from "../../../api/request";
 import moment from "moment";
 @Component({
   components: {},
 })
 export default class AdminForm extends Vue {
+  @Prop(String) user_id!:string;
   AdminInfo: any = {
     audit_time: "",
     audit_situation: "",
@@ -45,6 +46,29 @@ export default class AdminForm extends Vue {
     this.getUserInfo();
     this.AdminInfo.audit_time = moment(new Date()).format(
       "YYYY-MM-DD HH:MM:SS"
+    );
+  }
+  //查询申请记录
+  async queryAudition(user_id: number) {
+    let query = {
+      user_id: Number(this.user_id),
+    };
+    await api.BaseRequest.getRequest("/v1/adminAudition?", query).then(
+      (res: any) => {
+        if (res.statusCode === 404) {
+          this.submit()
+        } else if(res.data.data.audit_situation === '未通过') {
+          this.submit()
+        } else {
+          console.log(res.data.data);
+          Toast.fail("您的审核已通过，请勿重复提交！");
+          setTimeout(() => {
+            uni.navigateTo({
+              url: "/pages/home/index",
+            });
+          }, 2000);
+        }
+      }
     );
   }
 

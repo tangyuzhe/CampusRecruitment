@@ -26,7 +26,7 @@
           </u-form-item>
 
           <u-form-item label="招聘人数" label-width="150">
-            <u-number-box v-model="list[index].recruit_number"></u-number-box>
+            <u-number-box v-model="list[index].recruit_number" :min=1></u-number-box>
           </u-form-item>
         </u-form>
       </view>
@@ -82,7 +82,7 @@ export default class StationForm extends Vue {
       station: "",
       salary: "",
       workplace: "",
-      recruit_number: 0,
+      recruit_number: 1,
     };
     this.list.push(station);
   }

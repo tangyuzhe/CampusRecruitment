@@ -87,7 +87,7 @@
       mode="simple"
       @change="paginationChange"
     />
-
+    <u-alert-tips type="primary" :description="description" v-show="showTips"></u-alert-tips>
     <div style="margin: 16px">
       <van-button round block type="info" @click="submit"> 下一步 </van-button>
     </div>
@@ -111,6 +111,8 @@ export default class RoomArrangePage extends Vue {
   count: number = 0;
   total: any = [];
   disabled: boolean = true;
+  description: string = "该企业没有申请教室"
+  showTips: boolean = false
   @Emit("getCurrent") sendCurrent(current: number) {}
 
   formatTime(time: string) {
@@ -133,6 +135,9 @@ export default class RoomArrangePage extends Vue {
     };
     await api.BaseRequest.getRequest("/v1/arrangeClassroomList?", query).then(
       (res: any) => {
+        if(res.data.data.count === 0){
+          this.showTips = true
+        }
         if (res.data.code == 0) {
           this.list = res.data.data.rows;
           this.pageCount = Math.ceil(res.data.data.count / this.pageSize);

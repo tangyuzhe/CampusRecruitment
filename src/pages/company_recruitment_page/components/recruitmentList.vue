@@ -52,6 +52,7 @@
           <view class="u-body-item-title u-line-2">{{
             item.recruitment_info
           }}</view>
+          <view style="margin-left:20px"><u-tag :text="item.audit_situation" type="primary"  size='mini'/></view>
         </view>
         <u-link :href="'http://127.0.0.1:7001/public/upload/' + item.enclosure">
           <u-icon
@@ -180,6 +181,7 @@ export default class RecruitmentList extends Vue {
             this.status = "nomore";
           }
         }
+        console.log(this.list);
       }
     );
   }
